@@ -7,7 +7,7 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
 private val DarkColorPalette = darkColors(
-    primary = purple200,
+    primary = mpurple200,
     primaryVariant = purple700,
     secondary = teal200
 )
@@ -28,7 +28,7 @@ private val LightColorPalette = lightColors(
 )
 
 @Composable
-fun JetDiaryTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable() () -> Unit)
+fun AppTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable() () -> Unit)
 {
     val colors = if (darkTheme)
     {
@@ -41,8 +41,8 @@ fun JetDiaryTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composab
 
     MaterialTheme(
         colors = colors,
-        typography = typography,
-        shapes = shapes,
+        typography = mtypography,
+        shapes = mshapes,
         content = content
     )
 }

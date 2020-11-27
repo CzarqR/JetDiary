@@ -1,41 +1,34 @@
 package com.myniprojects.jetdiary.ui
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.setContent
-import androidx.ui.tooling.preview.Preview
-import com.myniprojects.jetdiary.ui.theme.JetDiaryTheme
+import com.myniprojects.jetdiary.ui.common.EditableList
+import com.myniprojects.jetdiary.ui.composes.LessonRow
+import com.myniprojects.jetdiary.ui.theme.AppTheme
+import com.myniprojects.jetdiary.vm.LessonViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity()
 {
+    private val lessonViewModel: LessonViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         setContent {
-            JetDiaryTheme {
+            AppTheme {
                 Surface(color = MaterialTheme.colors.background) {
-                    Greeting("Android")
+                    EditableList(
+                        editListState = lessonViewModel.lessonListState,
+                        editableRow = LessonRow
+                    )
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String)
-{
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview()
-{
-    JetDiaryTheme {
-        Greeting("Android")
     }
 }
