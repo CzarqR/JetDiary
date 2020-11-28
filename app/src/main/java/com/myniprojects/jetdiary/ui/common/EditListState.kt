@@ -17,16 +17,13 @@ class EditListState<T>(
 
     fun save()
     {
-        Timber.d("Save EditListState")
         updateBuffer?.let {
-            Timber.d("Save Not null")
             onSave(it)
         }
     }
 
     fun update(item: T)
     {
-        Timber.d("EditListState update $item")
         updateBuffer = item
     }
 

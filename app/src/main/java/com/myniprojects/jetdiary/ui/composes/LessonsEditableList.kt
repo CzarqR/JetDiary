@@ -23,7 +23,7 @@ import com.myniprojects.jetdiary.ui.common.EditListState
 import com.myniprojects.jetdiary.ui.common.EditableRow
 import com.myniprojects.jetdiary.ui.common.ItemRowBase
 import com.myniprojects.jetdiary.ui.theme.AppTheme
-import com.myniprojects.jetdiary.ui.theme.mytypography
+import com.myniprojects.jetdiary.ui.theme.AppTypography
 import timber.log.Timber
 
 
@@ -80,7 +80,7 @@ fun LessonItem(
                     onLongClick = { onLongClick(lesson) }
                 )
                 .padding(8.dp),
-            style = mytypography.h4,
+            style = AppTypography.h4,
             textAlign = TextAlign.Start,
         )
     }
@@ -111,7 +111,7 @@ fun EditLessonItem(
                 },
                 maxLines = 1,
                 backgroundColor = Color.Transparent,
-                textStyle = mytypography.h5.copy(
+                textStyle = AppTypography.h5.copy(
                     color = AmbientContentColor.current
                 )
             )

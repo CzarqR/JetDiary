@@ -3,11 +3,9 @@ package com.myniprojects.jetdiary.ui
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.platform.setContent
-import com.myniprojects.jetdiary.ui.common.EditableList
-import com.myniprojects.jetdiary.ui.composes.LessonRow
+import com.myniprojects.jetdiary.ui.composes.LessonScreen
 import com.myniprojects.jetdiary.ui.theme.AppTheme
 import com.myniprojects.jetdiary.vm.LessonViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,8 +21,8 @@ class MainActivity : AppCompatActivity()
         setContent {
             AppTheme {
                 Surface {
-                    EditableList(
-                        editableRow = lessonViewModel.lessonRow
+                    LessonScreen(
+                        lessonViewModel = lessonViewModel
                     )
                 }
             }

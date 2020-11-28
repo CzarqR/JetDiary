@@ -1,6 +1,7 @@
 package com.myniprojects.jetdiary.ui.common
 
 
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumnFor
@@ -54,13 +55,14 @@ interface EditableRow<T>
 
 @Composable
 fun <T> EditableList(
-    editableRow: EditableRow<T>
+    editableRow: EditableRow<T>,
+    modifier: Modifier = Modifier,
 )
 {
     val list: List<T> by editableRow.editListState.flowList.collectAsState(listOf())
 
     LazyColumnFor(
-        modifier = Modifier
+        modifier = modifier
             .padding(
                 top = dimensionResource(id = R.dimen.item_base_margin_v),
                 bottom = dimensionResource(id = R.dimen.item_base_margin_v)
