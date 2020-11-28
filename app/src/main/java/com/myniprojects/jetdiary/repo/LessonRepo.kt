@@ -31,7 +31,7 @@ class LessonRepo @Inject constructor(
                 database.lessonDao.deleteLesson(lesson)
             }
 
-    suspend fun insertLesson(lesson: Lesson) =
+    suspend fun insertLesson(lesson: Lesson): Long =
             withContext(Dispatchers.IO) {
                 database.lessonDao.insertLesson(lesson)
             }
@@ -40,6 +40,11 @@ class LessonRepo @Inject constructor(
     suspend fun clearLessonsTable() =
             withContext(Dispatchers.IO) {
                 database.lessonDao.clearTable()
+            }
+
+    suspend fun getLesson(id: Long): Lesson =
+            withContext(Dispatchers.IO) {
+                return@withContext database.lessonDao.getLesson(id)
             }
 
 }

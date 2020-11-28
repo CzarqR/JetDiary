@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Cancel
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.runtime.Composable
@@ -15,14 +15,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
+import com.myniprojects.jetdiary.R
 import com.myniprojects.jetdiary.db.lesson.Lesson
 import com.myniprojects.jetdiary.ui.common.EditListState
 import com.myniprojects.jetdiary.ui.common.EditableRow
 import com.myniprojects.jetdiary.ui.common.ItemRowBase
-import com.myniprojects.jetdiary.ui.theme.AppTheme
+import com.myniprojects.jetdiary.ui.theme.AppThemee
 import com.myniprojects.jetdiary.ui.theme.AppTypography
 import timber.log.Timber
 
@@ -101,6 +103,17 @@ fun EditLessonItem(
 
     ItemRowBase {
         Row {
+
+            IconButton(
+                onClick = {
+                    Timber.d("Delete")
+                    delete(lesson)
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterVertically),
+                icon = { Icon(asset = Icons.Outlined.Delete) }
+            )
+
             TextField(
                 modifier = Modifier
                     .weight(1f),
@@ -113,7 +126,11 @@ fun EditLessonItem(
                 backgroundColor = Color.Transparent,
                 textStyle = AppTypography.h5.copy(
                     color = AmbientContentColor.current
-                )
+                ),
+                label = {
+                    Text(text = stringResource(id = R.string.classes_name))
+                },
+                activeColor = MaterialTheme.colors.secondaryVariant
             )
 
             IconButton(
@@ -132,17 +149,7 @@ fun EditLessonItem(
                 },
                 modifier = Modifier
                     .align(Alignment.CenterVertically),
-                icon = { Icon(asset = Icons.Outlined.Cancel) }
-            )
-
-            IconButton(
-                onClick = {
-                    Timber.d("Delete")
-                    delete(lesson)
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterVertically),
-                icon = { Icon(asset = Icons.Outlined.Delete) }
+                icon = { Icon(asset = Icons.Outlined.Close) }
             )
         }
     }
@@ -153,7 +160,7 @@ fun EditLessonItem(
 @Composable
 fun LessonItemPreview()
 {
-    AppTheme {
+    AppThemee {
         LessonItem(Lesson("Mobile programing"), {}, {})
     }
 }
@@ -163,7 +170,7 @@ fun LessonItemPreview()
 @Composable
 fun EditLessonItemPreview()
 {
-    AppTheme {
+    AppThemee {
         EditLessonItem(Lesson("Mobile programing"), {}, {}, {}, {})
     }
 }
