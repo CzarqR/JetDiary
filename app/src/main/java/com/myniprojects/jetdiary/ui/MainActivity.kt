@@ -22,10 +22,9 @@ class MainActivity : AppCompatActivity()
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                Surface(color = MaterialTheme.colors.background) {
+                Surface {
                     EditableList(
-                        editListState = lessonViewModel.lessonListState,
-                        editableRow = LessonRow
+                        editableRow = lessonViewModel.lessonRow
                     )
                 }
             }

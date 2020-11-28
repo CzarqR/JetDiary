@@ -11,10 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import com.myniprojects.jetdiary.R
-import com.myniprojects.jetdiary.db.lesson.Lesson
-import com.myniprojects.jetdiary.ui.composes.EditLessonItem
-import com.myniprojects.jetdiary.ui.composes.LessonItem
-import com.myniprojects.jetdiary.utils.EditListState
 
 
 @Composable
@@ -45,16 +41,23 @@ interface EditableRow<T>
     fun defaultItem(item: T, onClick: (T) -> Unit, onLongClick: (T) -> Unit)
 
     @Composable
-    fun editableItem(item: T, save: (T) -> Unit, cancel: () -> Unit)
+    fun editableItem(
+        item: T,
+        save: (T) -> Unit,
+        cancel: () -> Unit,
+        delete: (T) -> Unit,
+        update: (T) -> Unit
+    )
+
+    val editListState: EditListState<T>
 }
 
 @Composable
 fun <T> EditableList(
-    editListState: EditListState<T>,
     editableRow: EditableRow<T>
 )
 {
-    val list: List<T> by editListState.flowList.collectAsState(listOf())
+    val list: List<T> by editableRow.editListState.flowList.collectAsState(listOf())
 
     LazyColumnFor(
         modifier = Modifier
@@ -64,13 +67,19 @@ fun <T> EditableList(
             ),
         items = list
     ) { item ->
-        if (item == editListState.currentEditItem)
+        if (item == editableRow.editListState.currentEditItem)
         {
             editableRow.editableItem(
                 item = item,
-                save = editListState.onSave,
+                save = {
+                    editableRow.editListState.save()
+                },
                 cancel = {
-                    editListState.unselectItem()
+                    editableRow.editListState.unselectItem()
+                },
+                delete = editableRow.editListState.onDelete,
+                update = {
+                    editableRow.editListState.update(it)
                 }
             )
         }
@@ -78,13 +87,11 @@ fun <T> EditableList(
         {
             editableRow.defaultItem(
                 item = item,
-                onClick = editListState.clickItem,
+                onClick = editableRow.editListState.clickItem,
                 onLongClick = {
-                    editListState.selectItem(it)
+                    editableRow.editListState.selectItem(it)
                 }
             )
         }
-
-
     }
 }

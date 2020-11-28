@@ -1,17 +1,35 @@
-package com.myniprojects.jetdiary.utils
+package com.myniprojects.jetdiary.ui.common
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.flow.Flow
+import timber.log.Timber
 
 class EditListState<T>(
     val flowList: Flow<List<T>>,
-    val onSave: (T) -> Unit,
+    private val onSave: (T) -> Unit,
     val onDelete: (T) -> Unit,
     val clickItem: (T) -> Unit
 )
 {
+    private var updateBuffer: T? = null
+
+    fun save()
+    {
+        Timber.d("Save EditListState")
+        updateBuffer?.let {
+            Timber.d("Save Not null")
+            onSave(it)
+        }
+    }
+
+    fun update(item: T)
+    {
+        Timber.d("EditListState update $item")
+        updateBuffer = item
+    }
+
     var currentEditItem: T? by mutableStateOf(null)
 
 

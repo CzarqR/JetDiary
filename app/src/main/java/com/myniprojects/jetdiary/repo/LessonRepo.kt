@@ -25,4 +25,21 @@ class LessonRepo @Inject constructor(
             database.lessonDao.insertLesson(Lesson("Mathematica"))
         }
     }
+
+    suspend fun deleteLesson(lesson: Lesson) =
+            withContext(Dispatchers.IO) {
+                database.lessonDao.deleteLesson(lesson)
+            }
+
+    suspend fun insertLesson(lesson: Lesson) =
+            withContext(Dispatchers.IO) {
+                database.lessonDao.insertLesson(lesson)
+            }
+
+
+    suspend fun clearLessonsTable() =
+            withContext(Dispatchers.IO) {
+                database.lessonDao.clearTable()
+            }
+
 }
