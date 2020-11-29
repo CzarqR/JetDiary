@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.myniprojects.jetdiary.db.AppDatabase
 import com.myniprojects.jetdiary.db.lesson.LessonDao
+import com.myniprojects.jetdiary.db.student.StudentDao
 import com.myniprojects.jetdiary.utils.Constants.DATABASE_NAME
 import dagger.Module
 import dagger.Provides
@@ -30,5 +31,9 @@ class DatabaseModule
 
     @Singleton
     @Provides
-    fun provideNewsDao(db: AppDatabase): LessonDao = db.lessonDao
+    fun provideLessonDao(db: AppDatabase): LessonDao = db.lessonDao
+
+    @Singleton
+    @Provides
+    fun provideStudentsDao(db: AppDatabase): StudentDao = db.studentDao
 }

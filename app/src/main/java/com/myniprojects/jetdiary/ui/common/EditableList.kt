@@ -4,6 +4,8 @@ package com.myniprojects.jetdiary.ui.common
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumnFor
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -11,10 +13,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import com.myniprojects.jetdiary.R
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 @Composable
-fun ItemRowBase(
+fun ItemRowBasee(
     body: @Composable () -> Unit
 )
 {
@@ -56,6 +62,7 @@ interface EditableRow<T>
 fun <T> EditableList(
     editableRow: EditableRow<T>,
     modifier: Modifier = Modifier,
+    state: LazyListState = rememberLazyListState()
 )
 {
     val list: List<T> by editableRow.editListState.flowList.collectAsState(listOf())
@@ -66,7 +73,8 @@ fun <T> EditableList(
                 top = dimensionResource(id = R.dimen.item_base_margin_v),
                 bottom = dimensionResource(id = R.dimen.item_base_margin_v)
             ),
-        items = list
+        items = list,
+        state = state
     ) { item ->
         if (item == editableRow.editListState.currentEditItem)
         {

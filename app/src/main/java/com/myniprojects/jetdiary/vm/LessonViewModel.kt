@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.myniprojects.jetdiary.db.lesson.Lesson
 import com.myniprojects.jetdiary.repo.LessonRepo
 import com.myniprojects.jetdiary.ui.common.EditListState
-import com.myniprojects.jetdiary.ui.composes.LessonRow
+import com.myniprojects.jetdiary.ui.lesson.LessonRow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
@@ -41,7 +41,7 @@ class LessonViewModel @ViewModelInject constructor(
 
     val lessonRow = LessonRow(lessonListState)
 
-    fun insertLesson(lesson: Lesson)
+    private fun insertLesson(lesson: Lesson)
     {
         viewModelScope.launch {
             lessonRepo.insertLesson(lesson)

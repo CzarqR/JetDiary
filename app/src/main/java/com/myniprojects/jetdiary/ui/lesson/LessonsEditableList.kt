@@ -1,9 +1,10 @@
-package com.myniprojects.jetdiary.ui.composes
+package com.myniprojects.jetdiary.ui.lesson
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
@@ -23,9 +25,9 @@ import com.myniprojects.jetdiary.R
 import com.myniprojects.jetdiary.db.lesson.Lesson
 import com.myniprojects.jetdiary.ui.common.EditListState
 import com.myniprojects.jetdiary.ui.common.EditableRow
-import com.myniprojects.jetdiary.ui.common.ItemRowBase
-import com.myniprojects.jetdiary.ui.theme.AppThemee
-import com.myniprojects.jetdiary.ui.theme.AppTypography
+import com.myniprojects.jetdiary.ui.common.ItemRowBasee
+import com.myniprojects.jetdiary.ui.theme.AppTheme
+import com.myniprojects.jetdiary.ui.theme.AppTypographyy
 import timber.log.Timber
 
 
@@ -72,7 +74,7 @@ fun LessonItem(
     onLongClick: (Lesson) -> Unit
 )
 {
-    ItemRowBase {
+    ItemRowBasee {
         Text(
             text = lesson.name,
             modifier = Modifier
@@ -82,7 +84,7 @@ fun LessonItem(
                     onLongClick = { onLongClick(lesson) }
                 )
                 .padding(8.dp),
-            style = AppTypography.h4,
+            style = AppTypographyy.h4,
             textAlign = TextAlign.Start,
         )
     }
@@ -101,7 +103,7 @@ fun EditLessonItem(
     val (text, setText) = remember { mutableStateOf(lesson.name) }
 
 
-    ItemRowBase {
+    ItemRowBasee {
         Row {
 
             IconButton(
@@ -122,9 +124,14 @@ fun EditLessonItem(
                     setText(it)
                     update(lesson.copy(name = it))
                 },
+                onImeActionPerformed = { imeAction, _ ->
+                    Timber.d("imeAction $imeAction")
+                },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                isErrorValue = text.isBlank(),
                 maxLines = 1,
                 backgroundColor = Color.Transparent,
-                textStyle = AppTypography.h5.copy(
+                textStyle = AppTypographyy.h5.copy(
                     color = AmbientContentColor.current
                 ),
                 label = {
@@ -136,7 +143,10 @@ fun EditLessonItem(
             IconButton(
                 onClick = {
                     Timber.d("Save Button")
-                    onSave(lesson)
+                    if (text.isNotBlank())
+                    {
+                        onSave(lesson)
+                    }
                 },
                 modifier = Modifier
                     .align(Alignment.CenterVertically),
@@ -160,7 +170,7 @@ fun EditLessonItem(
 @Composable
 fun LessonItemPreview()
 {
-    AppThemee {
+    AppTheme {
         LessonItem(Lesson("Mobile programing"), {}, {})
     }
 }
@@ -170,7 +180,7 @@ fun LessonItemPreview()
 @Composable
 fun EditLessonItemPreview()
 {
-    AppThemee {
+    AppTheme {
         EditLessonItem(Lesson("Mobile programing"), {}, {}, {}, {})
     }
 }
