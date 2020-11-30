@@ -36,6 +36,11 @@ class LessonViewModel @ViewModelInject constructor(
             }
 
             return@EditListState getLesson(id)
+        },
+        {
+            return@EditListState it.copy(
+                name = it.name.trim()
+            )
         }
     )
 

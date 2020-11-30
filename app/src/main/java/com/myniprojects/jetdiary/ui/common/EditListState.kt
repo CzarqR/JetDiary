@@ -10,7 +10,8 @@ class EditListState<T>(
     private val onSave: (T) -> Unit,
     val onDelete: (T) -> Unit,
     val clickItem: (T) -> Unit,
-    val generateNewItem: () -> T
+    val generateNewItem: () -> T,
+    val formatItem: (T) -> T
 )
 {
     private var updateBuffer: T? = null
@@ -18,7 +19,7 @@ class EditListState<T>(
     fun save()
     {
         updateBuffer?.let {
-            onSave(it)
+            onSave(formatItem(it))
         }
     }
 

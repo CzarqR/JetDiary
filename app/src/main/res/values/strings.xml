@@ -3,4 +3,6 @@
     <string name="select_classes">Select classes</string>
     <string name="classes_name">Classes name</string>
     <string name="students">Students</string>
+    <string name="name">Name</string>
+    <string name="surname">Surname</string>
 </resources>

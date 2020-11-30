@@ -1,23 +1,33 @@
 package com.myniprojects.jetdiary.ui.student
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Save
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawOpacity
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
+import com.myniprojects.jetdiary.R
 import com.myniprojects.jetdiary.db.student.Student
 import com.myniprojects.jetdiary.ui.common.EditListState
 import com.myniprojects.jetdiary.ui.common.EditableRow
 import com.myniprojects.jetdiary.ui.common.ItemRowBasee
 import com.myniprojects.jetdiary.ui.theme.AppTheme
 import com.myniprojects.jetdiary.ui.theme.AppTypographyy
+import timber.log.Timber
 
 class StudentRow(override val editListState: EditListState<Student>) : EditableRow<Student>
 {
@@ -64,32 +74,31 @@ fun StudentItem(
 )
 {
     ItemRowBasee {
-        Row {
+        Row(
+            modifier = Modifier
+                .clickable(
+                    onClick = { onCLick(student) },
+                    onLongClick = { onLongClick(student) }
+                )
+                .padding(dimensionResource(id = R.dimen.default_padding_small))
+        ) {
+
             Text(
-                text = student.name,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(
-                        onClick = { onCLick(student) },
-                        onLongClick = { onLongClick(student) }
-                    )
-                    .padding(8.dp),
+                text = student.surname,
+                modifier = Modifier.alignByBaseline(),
                 style = AppTypographyy.h4,
                 textAlign = TextAlign.Start,
             )
 
-//            Text(
-//                text = student.surname,
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .clickable(
-//                        onClick = { onCLick(student) },
-//                        onLongClick = { onLongClick(student) }
-//                    )
-//                    .padding(8.dp),
-//                style = AppTypographyy.h4,
-//                textAlign = TextAlign.Start,
-//            )
+            Text(
+                text = student.name,
+                modifier = Modifier
+                    .padding(start = dimensionResource(id = R.dimen.default_padding_small))
+                    .alignByBaseline()
+                    .drawOpacity(0.8f),
+                style = AppTypographyy.h5,
+                textAlign = TextAlign.Start,
+            )
         }
 
     }
@@ -105,12 +114,109 @@ fun EditStudentItem(
     update: (Student) -> Unit
 )
 {
-    val (text, setText) = remember { mutableStateOf(student.name) }
-
+    val (stud, setStudent) = remember { mutableStateOf(student) }
 
     ItemRowBasee {
-        Row {
+        Row(
+            modifier = Modifier.wrapContentHeight(),
+            verticalAlignment = Alignment.CenterVertically
 
+        ) {
+
+            // delete column
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                IconButton(
+                    onClick = {
+                        Timber.d("Delete")
+                        delete(student)
+                    },
+                    modifier = Modifier,
+                    icon = { Icon(asset = Icons.Outlined.Delete) }
+                )
+            }
+
+            // TextField column
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+
+
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = stud.surname,
+                    onValueChange = {
+                        setStudent(stud.copy(surname = it))
+                        update(stud)
+                    },
+                    onImeActionPerformed = { imeAction, _ ->
+                        Timber.d("imeAction $imeAction")
+                    },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    isErrorValue = stud.surname.isBlank(),
+                    maxLines = 1,
+                    backgroundColor = Color.Transparent,
+                    textStyle = AppTypographyy.h5.copy(
+                        color = AmbientContentColor.current
+                    ),
+                    label = {
+                        Text(text = stringResource(id = R.string.name))
+                    },
+                    activeColor = MaterialTheme.colors.secondaryVariant
+                )
+
+
+
+                TextField(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    value = stud.name,
+                    onValueChange = {
+                        setStudent(stud.copy(name = it))
+                        update(stud)
+                    },
+                    onImeActionPerformed = { imeAction, _ ->
+                        Timber.d("imeAction $imeAction")
+                    },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    isErrorValue = stud.name.isBlank(),
+                    maxLines = 1,
+                    backgroundColor = Color.Transparent,
+                    textStyle = AppTypographyy.h5.copy(
+                        color = AmbientContentColor.current
+                    ),
+                    label = {
+                        Text(text = stringResource(id = R.string.surname))
+                    },
+                    activeColor = MaterialTheme.colors.secondaryVariant
+                )
+            }
+
+            // save cancel column
+            Column(
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.default_padding_small))
+            ) {
+                IconButton(
+                    onClick = {
+                        Timber.d("Save Button")
+                        if (stud.surname.isNotBlank() && stud.name.isNotBlank())
+                        {
+                            onSave(student)
+                        }
+                    },
+                    modifier = Modifier,
+                    icon = { Icon(asset = Icons.Outlined.Save) }
+                )
+
+                IconButton(
+                    onClick = {
+                        onCancel()
+                    },
+                    modifier = Modifier,
+                    icon = { Icon(asset = Icons.Outlined.Close) }
+                )
+            }
 
         }
     }

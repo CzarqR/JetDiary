@@ -5,8 +5,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.Surface
 import androidx.compose.ui.platform.setContent
-import com.myniprojects.jetdiary.ui.composes.LessonScreen
-import com.myniprojects.jetdiary.ui.student.StudentScreen
+import com.myniprojects.jetdiary.ui.lesson.LessonScreen
 import com.myniprojects.jetdiary.ui.theme.AppTheme
 import com.myniprojects.jetdiary.vm.LessonViewModel
 import com.myniprojects.jetdiary.vm.StudentViewModel
@@ -22,16 +21,20 @@ class MainActivity : AppCompatActivity()
     {
         super.onCreate(savedInstanceState)
 
+        // turn on light mode to test
+        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        //delegate.applyDayNight()
+
         setContent {
             AppTheme {
                 Surface {
-//                    LessonScreen(
-//                        lessonViewModel = lessonViewModel
-//                    )
-
-                    StudentScreen(
-                        studentViewModel
+                    LessonScreen(
+                        lessonViewModel = lessonViewModel
                     )
+
+//                    StudentScreen(
+//                        studentViewModel
+//                    )
 
                 }
             }

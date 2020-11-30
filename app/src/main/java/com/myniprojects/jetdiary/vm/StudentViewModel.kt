@@ -35,6 +35,12 @@ class StudentViewModel @ViewModelInject constructor(
             }
 
             return@EditListState getStudent(id)
+        },
+        {
+            return@EditListState it.copy(
+                name = it.name.trim(),
+                surname = it.surname.trim()
+            )
         }
     )
 

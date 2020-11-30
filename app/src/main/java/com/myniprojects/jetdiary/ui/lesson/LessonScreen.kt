@@ -1,4 +1,4 @@
-package com.myniprojects.jetdiary.ui.composes
+package com.myniprojects.jetdiary.ui.lesson
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -32,7 +32,7 @@ fun LessonScreen(lessonViewModel: LessonViewModel)
 
             FloatingActionButton(onClick = {
                 lessonViewModel.lessonRow.editListState.addAndEditNewItem()
-                // todo set state to position 0
+                // todo set state to position 0. `snapToItemIndex` currently internal
             }) {
                 Icon(asset = Icons.Outlined.Add)
             }
