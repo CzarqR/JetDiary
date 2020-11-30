@@ -25,7 +25,7 @@ import com.myniprojects.jetdiary.R
 import com.myniprojects.jetdiary.db.lesson.Lesson
 import com.myniprojects.jetdiary.ui.common.EditListState
 import com.myniprojects.jetdiary.ui.common.EditableRow
-import com.myniprojects.jetdiary.ui.common.ItemRowBasee
+import com.myniprojects.jetdiary.ui.common.ItemRowBase
 import com.myniprojects.jetdiary.ui.theme.AppTheme
 import com.myniprojects.jetdiary.ui.theme.AppTypographyy
 import timber.log.Timber
@@ -74,7 +74,7 @@ fun LessonItem(
     onLongClick: (Lesson) -> Unit
 )
 {
-    ItemRowBasee {
+    ItemRowBase {
         Text(
             text = lesson.name,
             modifier = Modifier
@@ -103,7 +103,7 @@ fun EditLessonItem(
     val (text, setText) = remember { mutableStateOf(lesson.name) }
 
 
-    ItemRowBasee {
+    ItemRowBase {
         Row {
 
             IconButton(

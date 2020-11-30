@@ -20,7 +20,7 @@ import timber.log.Timber
 
 
 @Composable
-fun ItemRowBasee(
+fun ItemRowBase(
     body: @Composable () -> Unit
 )
 {

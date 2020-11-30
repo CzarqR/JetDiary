@@ -1,21 +1,18 @@
-package com.myniprojects.jetdiary.ui
+package com.myniprojects.jetdiary.ui.main
 
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.Surface
 import androidx.compose.ui.platform.setContent
-import com.myniprojects.jetdiary.ui.lesson.LessonScreen
 import com.myniprojects.jetdiary.ui.theme.AppTheme
-import com.myniprojects.jetdiary.vm.LessonViewModel
-import com.myniprojects.jetdiary.vm.StudentViewModel
+import com.myniprojects.jetdiary.vm.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity()
 {
-    private val lessonViewModel: LessonViewModel by viewModels()
-    private val studentViewModel: StudentViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -28,14 +25,9 @@ class MainActivity : AppCompatActivity()
         setContent {
             AppTheme {
                 Surface {
-                    LessonScreen(
-                        lessonViewModel = lessonViewModel
+                    App(
+                        viewModel = mainViewModel
                     )
-
-//                    StudentScreen(
-//                        studentViewModel
-//                    )
-
                 }
             }
         }

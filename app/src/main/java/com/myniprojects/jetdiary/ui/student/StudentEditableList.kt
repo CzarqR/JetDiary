@@ -24,7 +24,7 @@ import com.myniprojects.jetdiary.R
 import com.myniprojects.jetdiary.db.student.Student
 import com.myniprojects.jetdiary.ui.common.EditListState
 import com.myniprojects.jetdiary.ui.common.EditableRow
-import com.myniprojects.jetdiary.ui.common.ItemRowBasee
+import com.myniprojects.jetdiary.ui.common.ItemRowBase
 import com.myniprojects.jetdiary.ui.theme.AppTheme
 import com.myniprojects.jetdiary.ui.theme.AppTypographyy
 import timber.log.Timber
@@ -73,7 +73,7 @@ fun StudentItem(
     onLongClick: (Student) -> Unit
 )
 {
-    ItemRowBasee {
+    ItemRowBase {
         Row(
             modifier = Modifier
                 .clickable(
@@ -116,7 +116,7 @@ fun EditStudentItem(
 {
     val (stud, setStudent) = remember { mutableStateOf(student) }
 
-    ItemRowBasee {
+    ItemRowBase {
         Row(
             modifier = Modifier.wrapContentHeight(),
             verticalAlignment = Alignment.CenterVertically
