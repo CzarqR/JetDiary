@@ -7,7 +7,7 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
 private val DarkColorPalette = darkColors(
-    primary = kcolorPrimaryDark,
+    primary = colorPrimaryDark,
     primaryVariant = colorPrimaryVariantDark,
     secondary = colorSecondaryDark,
     onPrimary = colorOnPrimaryDark,
@@ -37,8 +37,8 @@ fun AppTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable ()
 
     MaterialTheme(
         colors = colors,
-        typography = AppTypographyy,
-        shapes = AppShapess,
+        typography = AppTypography,
+        shapes = AppShapes,
         content = content
     )
 }

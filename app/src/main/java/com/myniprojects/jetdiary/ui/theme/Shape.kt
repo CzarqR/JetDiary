@@ -4,7 +4,7 @@ import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.Shapes
 import androidx.compose.ui.unit.dp
 
-val AppShapess = Shapes(
+val AppShapes = Shapes(
     small = CutCornerShape(
         topLeft = 4.dp,
         bottomRight = 4.dp

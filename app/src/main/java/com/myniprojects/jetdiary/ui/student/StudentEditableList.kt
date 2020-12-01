@@ -26,7 +26,7 @@ import com.myniprojects.jetdiary.ui.common.EditListState
 import com.myniprojects.jetdiary.ui.common.EditableRow
 import com.myniprojects.jetdiary.ui.common.ItemRowBase
 import com.myniprojects.jetdiary.ui.theme.AppTheme
-import com.myniprojects.jetdiary.ui.theme.AppTypographyy
+import com.myniprojects.jetdiary.ui.theme.AppTypography
 import timber.log.Timber
 
 class StudentRow(override val editListState: EditListState<Student>) : EditableRow<Student>
@@ -86,7 +86,7 @@ fun StudentItem(
             Text(
                 text = student.surname,
                 modifier = Modifier.alignByBaseline(),
-                style = AppTypographyy.h4,
+                style = AppTypography.h4,
                 textAlign = TextAlign.Start,
             )
 
@@ -96,7 +96,7 @@ fun StudentItem(
                     .padding(start = dimensionResource(id = R.dimen.default_padding_small))
                     .alignByBaseline()
                     .drawOpacity(0.8f),
-                style = AppTypographyy.h5,
+                style = AppTypography.h5,
                 textAlign = TextAlign.Start,
             )
         }
@@ -157,7 +157,7 @@ fun EditStudentItem(
                     isErrorValue = stud.surname.isBlank(),
                     maxLines = 1,
                     backgroundColor = Color.Transparent,
-                    textStyle = AppTypographyy.h5.copy(
+                    textStyle = AppTypography.h5.copy(
                         color = AmbientContentColor.current
                     ),
                     label = {
@@ -183,7 +183,7 @@ fun EditStudentItem(
                     isErrorValue = stud.name.isBlank(),
                     maxLines = 1,
                     backgroundColor = Color.Transparent,
-                    textStyle = AppTypographyy.h5.copy(
+                    textStyle = AppTypography.h5.copy(
                         color = AmbientContentColor.current
                     ),
                     label = {

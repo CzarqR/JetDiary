@@ -17,7 +17,7 @@ import androidx.compose.ui.res.dimensionResource
 import com.myniprojects.jetdiary.R
 
 @Composable
-fun <T> DefaultBodyy(
+fun <T> DefaultBody(
     editableRow: EditableRow<T>,
     state: LazyListState = rememberLazyListState(),
     showFab: Boolean = remember { true },

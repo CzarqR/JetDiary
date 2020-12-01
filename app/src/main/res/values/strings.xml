@@ -5,4 +5,6 @@
     <string name="students">Students</string>
     <string name="name">Name</string>
     <string name="surname">Surname</string>
+    <string name="marks">Marks</string>
+    <string name="classes">Classes</string>
 </resources>

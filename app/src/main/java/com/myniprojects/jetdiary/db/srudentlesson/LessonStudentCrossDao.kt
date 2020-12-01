@@ -5,16 +5,16 @@ import kotlinx.coroutines.flow.Flow
 
 
 @Dao
-interface StudentLessonCrossDao
+interface LessonStudentCrossDao
 {
     @Transaction
     @Query("SELECT * FROM lessons WHERE lessonId = :lessonId")
     fun getStudentsOfLesson(lessonId: Long): Flow<LessonWithStudent>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun assignStudentToLesson(studentLessonCrossRef: StudentLessonCrossRef)
+    suspend fun assignStudentToLesson(lessonStudentCrossRef: LessonStudentCrossRef)
 
-//    @Transaction
-//    @Query("SELECT * FROM students WHERE studentId = :studentId")
-//    suspend fun getLessonsOfStudents(studentId: Long): List<StudentWithLesson>
+    @Query("DELETE FROM student_lesson_cross")
+    suspend fun clearTable()
+
 }

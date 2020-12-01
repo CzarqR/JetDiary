@@ -7,11 +7,15 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.myniprojects.jetdiary.db.lesson.Lesson
+import com.myniprojects.jetdiary.db.mark.Mark
+import com.myniprojects.jetdiary.db.mark.MarkAssigned
 import com.myniprojects.jetdiary.db.student.Student
 import com.myniprojects.jetdiary.repo.LessonRepo
+import com.myniprojects.jetdiary.repo.MarkRepo
 import com.myniprojects.jetdiary.repo.StudentRepo
 import com.myniprojects.jetdiary.ui.common.EditListState
 import com.myniprojects.jetdiary.ui.lesson.LessonRow
+import com.myniprojects.jetdiary.ui.mark.MarkRow
 import com.myniprojects.jetdiary.ui.student.StudentRow
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
@@ -23,6 +27,7 @@ import timber.log.Timber
 class MainViewModel @ViewModelInject constructor(
     private val lessonRepo: LessonRepo,
     private val studentRepo: StudentRepo,
+    private val markRepo: MarkRepo,
 ) : ViewModel()
 {
     init
@@ -30,8 +35,12 @@ class MainViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             lessonRepo.mockData()
             studentRepo.mockData()
+            markRepo.mockData()
         }
     }
+
+
+    // region lesson
 
     private val _selectedLesson: MutableStateFlow<Lesson?> = MutableStateFlow(null)
 
@@ -48,9 +57,6 @@ class MainViewModel @ViewModelInject constructor(
             flowOf()
         }
     }
-
-    // region lesson
-
 
     private val lessonListState = EditListState(
         flowList = lessonRepo.lessons,
@@ -108,6 +114,23 @@ class MainViewModel @ViewModelInject constructor(
 
     // region students
 
+    private val _selectedStudent: MutableStateFlow<Student?> = MutableStateFlow(null)
+
+    private val studentsMarks: Flow<List<MarkAssigned>> = _selectedStudent.flatMapLatest { student ->
+
+        val lesson = _selectedLesson.value
+
+        if (student != null && lesson != null)
+        {
+            markRepo.getMarks(lessonId = lesson.lessonId, studentId = student.studentId)
+        }
+        else
+        {
+            flowOf()
+        }
+    }
+
+
     private val studentListState = EditListState(
         flowList = studentsInLesson,
         onSave = {
@@ -120,6 +143,8 @@ class MainViewModel @ViewModelInject constructor(
         },
         clickItem = {
             Timber.d("Item clicked $it")
+            _selectedStudent.value = it
+            _navigateToMarks.value = true
         },
         generateNewItem = {
 
@@ -151,6 +176,43 @@ class MainViewModel @ViewModelInject constructor(
         studentRepo.getLesson(id)
     }
 
+    private val _navigateToMarks: MutableState<Boolean> = mutableStateOf(false)
+    val navigateToMarks: State<Boolean> = _navigateToMarks
+
+    fun marksNavigated()
+    {
+        _navigateToMarks.value = false
+    }
+
     // endregion
 
+
+    // region marks
+
+
+    private val markListState = EditListState(
+        flowList = studentsMarks,
+        onSave = {
+        },
+        onDelete = {
+            viewModelScope.launch {
+
+            }
+        },
+        clickItem = {
+            Timber.d("Item clicked $it")
+        },
+        generateNewItem = {
+
+            return@EditListState MarkAssigned(0, 0, Mark.FIVE)
+        },
+        {
+            return@EditListState it
+        }
+    )
+
+    val markRow = MarkRow(markListState)
+
+
+    // endregion
 }

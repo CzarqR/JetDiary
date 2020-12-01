@@ -1,4 +1,4 @@
-package com.myniprojects.jetdiary.ui.student
+package com.myniprojects.jetdiary.ui.marks
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -11,17 +11,17 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 @Composable
-fun StudentBody(
+fun MarksBody(
     viewModel: MainViewModel,
     setTitle: (String) -> Unit,
     state: LazyListState = rememberLazyListState()
 )
 {
     DefaultBody(
-        editableRow = viewModel.studentRow,
+        editableRow = viewModel.markRow,
         fabClick = {},
         state = state,
         setTitle = setTitle,
-        title = stringResource(id = R.string.students)
+        title = stringResource(id = R.string.marks)
     )
 }

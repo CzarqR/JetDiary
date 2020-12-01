@@ -8,4 +8,5 @@ object Constants
     //navigation
     const val STUDENT_SCREEN_ROUTE = "STUDENT_SCREEN_ROUTE"
     const val LESSON_SCREEN_ROUTE = "LESSON_SCREEN_ROUTE"
+    const val MARKS_SCREEN_ROUTE = "MARKS_SCREEN_ROUTE"
 }
