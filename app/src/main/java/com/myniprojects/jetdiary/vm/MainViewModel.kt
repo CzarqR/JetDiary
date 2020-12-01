@@ -1,6 +1,8 @@
 package com.myniprojects.jetdiary.vm
 
 import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.myniprojects.jetdiary.db.lesson.Lesson
@@ -29,6 +31,9 @@ class MainViewModel @ViewModelInject constructor(
 
     // region lesson
 
+    lateinit var selectedLesson: Lesson
+        private set
+
     private val lessonListState = EditListState(
         flowList = lessonRepo.lessons,
         onSave = {
@@ -41,6 +46,8 @@ class MainViewModel @ViewModelInject constructor(
         },
         clickItem = {
             Timber.d("Item clicked $it")
+            selectedLesson = it
+            _navigateToStudents.value = true
         },
         generateNewItem = {
 
@@ -56,6 +63,15 @@ class MainViewModel @ViewModelInject constructor(
             )
         }
     )
+
+    private val _navigateToStudents: MutableLiveData<Boolean> = MutableLiveData()
+    val navigateToStudents: LiveData<Boolean>
+        get() = _navigateToStudents
+
+    fun studentsNavigated()
+    {
+        _navigateToStudents.value = false
+    }
 
     val lessonRow = LessonRow(lessonListState)
 

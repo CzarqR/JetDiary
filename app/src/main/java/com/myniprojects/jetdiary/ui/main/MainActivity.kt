@@ -3,6 +3,7 @@ package com.myniprojects.jetdiary.ui.main
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.material.Surface
 import androidx.compose.ui.platform.setContent
 import com.myniprojects.jetdiary.ui.theme.AppTheme
@@ -19,8 +20,8 @@ class MainActivity : AppCompatActivity()
         super.onCreate(savedInstanceState)
 
         // turn on light mode to test
-        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        //delegate.applyDayNight()
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        delegate.applyDayNight()
 
         setContent {
             AppTheme {
