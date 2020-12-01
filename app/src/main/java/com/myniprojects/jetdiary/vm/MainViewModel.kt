@@ -1,8 +1,9 @@
 package com.myniprojects.jetdiary.vm
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.myniprojects.jetdiary.db.lesson.Lesson
@@ -12,10 +13,13 @@ import com.myniprojects.jetdiary.repo.StudentRepo
 import com.myniprojects.jetdiary.ui.common.EditListState
 import com.myniprojects.jetdiary.ui.lesson.LessonRow
 import com.myniprojects.jetdiary.ui.student.StudentRow
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 
+@ExperimentalCoroutinesApi
 class MainViewModel @ViewModelInject constructor(
     private val lessonRepo: LessonRepo,
     private val studentRepo: StudentRepo,
@@ -29,10 +33,24 @@ class MainViewModel @ViewModelInject constructor(
         }
     }
 
+    private val _selectedLesson: MutableStateFlow<Lesson?> = MutableStateFlow(null)
+
+    private val studentsInLesson: Flow<List<Student>> = _selectedLesson.flatMapLatest { lesson ->
+
+        if (lesson != null)
+        {
+            studentRepo.getStudentsInLesson(lesson.lessonId).map { lws ->
+                lws.students
+            }
+        }
+        else
+        {
+            flowOf()
+        }
+    }
+
     // region lesson
 
-    lateinit var selectedLesson: Lesson
-        private set
 
     private val lessonListState = EditListState(
         flowList = lessonRepo.lessons,
@@ -46,7 +64,7 @@ class MainViewModel @ViewModelInject constructor(
         },
         clickItem = {
             Timber.d("Item clicked $it")
-            selectedLesson = it
+            _selectedLesson.value = it
             _navigateToStudents.value = true
         },
         generateNewItem = {
@@ -64,15 +82,6 @@ class MainViewModel @ViewModelInject constructor(
         }
     )
 
-    private val _navigateToStudents: MutableLiveData<Boolean> = MutableLiveData()
-    val navigateToStudents: LiveData<Boolean>
-        get() = _navigateToStudents
-
-    fun studentsNavigated()
-    {
-        _navigateToStudents.value = false
-    }
-
     val lessonRow = LessonRow(lessonListState)
 
     private fun insertLesson(lesson: Lesson)
@@ -86,12 +95,21 @@ class MainViewModel @ViewModelInject constructor(
         lessonRepo.getLesson(id)
     }
 
+    private val _navigateToStudents: MutableState<Boolean> = mutableStateOf(false)
+    val navigateToStudents: State<Boolean> = _navigateToStudents
+
+    fun studentsNavigated()
+    {
+        _navigateToStudents.value = false
+    }
+
+
     // endregion
 
     // region students
 
     private val studentListState = EditListState(
-        flowList = studentRepo.students,
+        flowList = studentsInLesson,
         onSave = {
             insertStudent(it)
         },

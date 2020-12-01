@@ -1,5 +1,7 @@
 package com.myniprojects.jetdiary.repo
 
+import com.myniprojects.jetdiary.db.srudentlesson.StudentLessonCrossDao
+import com.myniprojects.jetdiary.db.srudentlesson.StudentLessonCrossRef
 import com.myniprojects.jetdiary.db.student.Student
 import com.myniprojects.jetdiary.db.student.StudentDao
 import kotlinx.coroutines.Dispatchers
@@ -8,20 +10,28 @@ import javax.inject.Inject
 
 
 class StudentRepo @Inject constructor(
-    private val studentDao: StudentDao
+    private val studentDao: StudentDao,
+    private val crossDao: StudentLessonCrossDao
+
 )
 {
     val students = studentDao.getStudents()
+
+    fun getStudentsInLesson(lessonId: Long) = crossDao.getStudentsOfLesson(lessonId)
 
     suspend fun mockData()
     {
         withContext(Dispatchers.IO)
         {
             studentDao.clearTable()
-            studentDao.insertStudent(Student(name = "Leo", surname = "Messi"))
-            studentDao.insertStudent(Student(name = "Luis", surname = "Suarez"))
-            studentDao.insertStudent(Student(name = "Frankie", surname = "De Jong"))
-            studentDao.insertStudent(Student(name = "Sergi", surname = "Roberto"))
+            studentDao.insertStudent(Student(name = "Luis", surname = "Suarez", 1))
+            studentDao.insertStudent(Student(name = "Frankie", surname = "De Jong", 2))
+            studentDao.insertStudent(Student(name = "Sergi", surname = "Roberto", 3))
+            studentDao.insertStudent(Student(name = "Leo", surname = "Messi", 4))
+
+            crossDao.assignStudentToLesson(StudentLessonCrossRef(1, 1))
+            crossDao.assignStudentToLesson(StudentLessonCrossRef(2, 1))
+            crossDao.assignStudentToLesson(StudentLessonCrossRef(3, 1))
         }
     }
 

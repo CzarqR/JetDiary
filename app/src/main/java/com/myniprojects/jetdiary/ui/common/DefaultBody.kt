@@ -17,18 +17,24 @@ import androidx.compose.ui.res.dimensionResource
 import com.myniprojects.jetdiary.R
 
 @Composable
-fun <T> DefaultBody(
+fun <T> DefaultBodyy(
     editableRow: EditableRow<T>,
     state: LazyListState = rememberLazyListState(),
     showFab: Boolean = remember { true },
     fabClick: () -> Unit = { },
+    setTitle: (String) -> Unit = {},
+    title: String? = null
 )
 {
+    title?.let {
+        setTitle(it)
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        EditableList(
+        EditableListt(
             editableRow = editableRow,
             modifier = Modifier
                 .fillMaxSize(),

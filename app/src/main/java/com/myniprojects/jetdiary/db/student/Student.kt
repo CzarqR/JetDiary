@@ -7,5 +7,5 @@ import androidx.room.PrimaryKey
 data class Student(
     val name: String = "",
     val surname: String = "",
-    @PrimaryKey(autoGenerate = true) val id: Long = 0L
+    @PrimaryKey(autoGenerate = true) val studentId: Long = 0L
 )

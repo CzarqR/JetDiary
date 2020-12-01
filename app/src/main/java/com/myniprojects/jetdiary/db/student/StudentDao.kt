@@ -18,6 +18,6 @@ interface StudentDao
     @Delete
     suspend fun deleteStudent(student: Student)
 
-    @Query("SELECT * FROM students WHERE id=:id")
+    @Query("SELECT * FROM students WHERE studentId=:id")
     suspend fun getStudent(id: Long): Student
 }

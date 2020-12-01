@@ -59,7 +59,7 @@ interface EditableRow<T>
 }
 
 @Composable
-fun <T> EditableList(
+fun <T> EditableListt(
     editableRow: EditableRow<T>,
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState()

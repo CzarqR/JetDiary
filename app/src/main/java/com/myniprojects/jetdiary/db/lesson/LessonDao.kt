@@ -18,6 +18,6 @@ interface LessonDao
     @Delete
     suspend fun deleteLesson(lesson: Lesson)
 
-    @Query("SELECT * FROM lessons WHERE id=:id")
+    @Query("SELECT * FROM lessons WHERE lessonId=:id")
     suspend fun getLesson(id: Long): Lesson
 }

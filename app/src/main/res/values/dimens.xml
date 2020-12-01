@@ -5,4 +5,5 @@
     <dimen name="card_elevation">8dp</dimen>
     <dimen name="default_padding_small">8dp</dimen>
     <dimen name="fab_padding">16dp</dimen>
+    <dimen name="nav_drawer_cut">14dp</dimen>
 </resources>
