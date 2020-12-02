@@ -13,7 +13,7 @@ interface StudentDao
     suspend fun clearTable()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertStudent(student: Student): Long
+    suspend fun insertStudent(student: Student)
 
     @Query("UPDATE students SET name=:name, surname=:surname WHERE studentId=:studentId")
     suspend fun updateLesson(name: String, surname: String, studentId: Long)
@@ -21,6 +21,4 @@ interface StudentDao
     @Delete
     suspend fun deleteStudent(student: Student)
 
-    @Query("SELECT * FROM students WHERE studentId=:id")
-    suspend fun getStudent(id: Long): Student
 }

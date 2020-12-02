@@ -13,10 +13,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import com.myniprojects.jetdiary.R
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import timber.log.Timber
 
 
 @Composable
@@ -55,11 +51,18 @@ interface EditableRow<T>
         update: (T) -> Unit
     )
 
+    @Composable
+    fun addableItem(
+        item: T,
+        save: (T) -> Unit,
+        update: (T) -> Unit
+    )
+
     val editListState: EditListState<T>
 }
 
 @Composable
-fun <T> EditableListt(
+fun <T> EditableList(
     editableRow: EditableRow<T>,
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState()
@@ -76,31 +79,34 @@ fun <T> EditableListt(
         items = list,
         state = state
     ) { item ->
-        if (item == editableRow.editListState.currentEditItem)
-        {
-            editableRow.editableItem(
-                item = item,
-                save = {
-                    editableRow.editListState.save()
-                },
-                cancel = {
-                    editableRow.editListState.unselectItem()
-                },
-                delete = editableRow.editListState.onDelete,
-                update = {
-                    editableRow.editListState.update(it)
-                }
-            )
+        ItemRowBase {
+            if (item == editableRow.editListState.currentEditItem)
+            {
+                editableRow.editableItem(
+                    item = item,
+                    save = {
+                        editableRow.editListState.updateDb()
+                    },
+                    cancel = {
+                        editableRow.editListState.unselectItem()
+                    },
+                    delete = editableRow.editListState.onDelete,
+                    update = {
+                        editableRow.editListState.updateBuffer(it)
+                    }
+                )
+            }
+            else
+            {
+                editableRow.defaultItem(
+                    item = item,
+                    onClick = editableRow.editListState.clickItem,
+                    onLongClick = {
+                        editableRow.editListState.selectItem(it)
+                    }
+                )
+            }
         }
-        else
-        {
-            editableRow.defaultItem(
-                item = item,
-                onClick = editableRow.editListState.clickItem,
-                onLongClick = {
-                    editableRow.editListState.selectItem(it)
-                }
-            )
-        }
+
     }
 }

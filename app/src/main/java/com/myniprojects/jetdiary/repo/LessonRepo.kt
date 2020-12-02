@@ -32,20 +32,14 @@ class LessonRepo @Inject constructor(
                 lessonDao.deleteLesson(lesson)
             }
 
-    suspend fun insertLesson(lesson: Lesson): Long =
+    suspend fun insertLesson(lesson: Lesson) =
             withContext(Dispatchers.IO) {
                 lessonDao.insertLesson(lesson)
             }
 
-
     suspend fun clearLessonsTable() =
             withContext(Dispatchers.IO) {
                 lessonDao.clearTable()
-            }
-
-    suspend fun getLesson(id: Long): Lesson =
-            withContext(Dispatchers.IO) {
-                return@withContext lessonDao.getLesson(id)
             }
 
     suspend fun updateLesson(lesson: Lesson) =

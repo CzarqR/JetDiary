@@ -4,11 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.flow.Flow
-import timber.log.Timber
 
 class EditListState<T>(
     val flowList: Flow<List<T>>,
-    private val onSave: (T) -> Unit,
+    private val update: (T) -> Unit,
+    val insert: (T) -> Unit,
     val onDelete: (T) -> Unit,
     val clickItem: (T) -> Unit,
     val generateNewItem: () -> T,
@@ -17,19 +17,15 @@ class EditListState<T>(
 {
     private var updateBuffer: T? = null
 
-    fun save()
+    fun updateDb()
     {
-        Timber.d("Save")
         updateBuffer?.let {
-            Timber.d("Save")
-            onSave(formatItem(it))
+            update(formatItem(it))
         }
     }
 
-    fun update(item: T)
+    fun updateBuffer(item: T)
     {
-        Timber.d(item.toString())
-        Timber.d("Update")
         updateBuffer = item
     }
 
@@ -45,14 +41,5 @@ class EditListState<T>(
     fun unselectItem()
     {
         currentEditItem = null
-    }
-
-    fun addAndEditNewItem()
-    {
-        val item = generateNewItem()
-
-        onSave(item)
-        selectItem(item)
-
     }
 }

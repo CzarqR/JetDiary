@@ -13,7 +13,6 @@ class MarkRepo @Inject constructor(
 {
     fun getMarks(lessonId: Long, studentId: Long) = markDao.getMarks(studentId, lessonId)
 
-
     suspend fun mockData()
     {
         withContext(Dispatchers.IO)
@@ -27,14 +26,13 @@ class MarkRepo @Inject constructor(
         }
     }
 
-
     suspend fun clearTable() =
             withContext(Dispatchers.IO) {
                 markDao.clearTable()
             }
 
 
-    suspend fun insertMark(markAssigned: MarkAssigned): Long =
+    suspend fun insertMark(markAssigned: MarkAssigned) =
             withContext(Dispatchers.IO) {
                 markDao.insertMark(markAssigned)
             }
@@ -45,10 +43,12 @@ class MarkRepo @Inject constructor(
                 markDao.deleteMark(markAssigned)
             }
 
-
-    suspend fun getMark(id: Long): MarkAssigned =
+    suspend fun updateMark(markAssigned: MarkAssigned) =
             withContext(Dispatchers.IO) {
-                return@withContext markDao.getMark(id)
+                markDao.updateMark(
+                    note = markAssigned.note,
+                    mark = markAssigned.mark,
+                    assignedMarkId = markAssigned.assignedMarkId
+                )
             }
-
 }

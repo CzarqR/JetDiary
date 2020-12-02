@@ -16,7 +16,7 @@ import com.myniprojects.jetdiary.repo.StudentRepo
 import com.myniprojects.jetdiary.ui.common.EditListState
 import com.myniprojects.jetdiary.ui.lesson.LessonRow
 import com.myniprojects.jetdiary.ui.mark.MarkRow
-import com.myniprojects.jetdiary.ui.student.StudentRow
+import com.myniprojects.jetdiary.ui.studenteditor.StudentRow
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
@@ -60,8 +60,11 @@ class MainViewModel @ViewModelInject constructor(
 
     private val lessonListState = EditListState(
         flowList = lessonRepo.lessons,
-        onSave = {
+        update = {
             updateLesson(it)
+        },
+        insert = {
+            insertLesson(it)
         },
         onDelete = {
             viewModelScope.launch {
@@ -74,12 +77,7 @@ class MainViewModel @ViewModelInject constructor(
             _navigateToStudents.value = true
         },
         generateNewItem = {
-
-            val id = runBlocking {
-                lessonRepo.insertLesson(Lesson())
-            }
-
-            return@EditListState getLesson(id)
+            return@EditListState Lesson()
         },
         {
             return@EditListState it.copy(
@@ -88,14 +86,17 @@ class MainViewModel @ViewModelInject constructor(
         }
     )
 
-    private fun getLesson(id: Long): Lesson = runBlocking(Dispatchers.IO) {
-        lessonRepo.getLesson(id)
-    }
-
     private fun updateLesson(lesson: Lesson)
     {
         viewModelScope.launch {
             lessonRepo.updateLesson(lesson)
+        }
+    }
+
+    private fun insertLesson(lesson: Lesson)
+    {
+        viewModelScope.launch {
+            lessonRepo.insertLesson(lesson)
         }
     }
 
@@ -134,8 +135,11 @@ class MainViewModel @ViewModelInject constructor(
 
     private val studentListState = EditListState(
         flowList = studentsInLesson,
-        onSave = {
+        update = {
             updateStudent(it)
+        },
+        insert = {
+            insertStudent(it)
         },
         onDelete = {
             viewModelScope.launch {
@@ -148,14 +152,7 @@ class MainViewModel @ViewModelInject constructor(
             _navigateToMarks.value = true
         },
         generateNewItem = {
-
-            Timber.d("Generate")
-
-            val id = runBlocking {
-                studentRepo.insertStudent(Student())
-            }
-
-            return@EditListState getStudent(id)
+            return@EditListState Student()
         },
         {
             return@EditListState it.copy(
@@ -182,10 +179,6 @@ class MainViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun getStudent(id: Long): Student = runBlocking {
-        studentRepo.getStudent(id)
-    }
-
     private val _navigateToMarks: MutableState<Boolean> = mutableStateOf(false)
     val navigateToMarks: State<Boolean> = _navigateToMarks
 
@@ -201,8 +194,10 @@ class MainViewModel @ViewModelInject constructor(
 
     private val markListState = EditListState(
         flowList = studentsMarks,
-        onSave = {
-            Timber.d("onSave vm")
+        update = {
+            updateMark(it)
+        },
+        insert = {
             insertMark(it)
         },
         onDelete = {
@@ -220,18 +215,11 @@ class MainViewModel @ViewModelInject constructor(
 
             if (lessonId != null && studentId != null)
             {
-                val id = runBlocking {
-
-                    markRepo.insertMark(
-                        MarkAssigned(
-                            lessonId = lessonId,
-                            studentId = studentId,
-                            mark = Mark.FIVE
-                        )
-                    )
-                }
-
-                return@EditListState getMark(id)
+                return@EditListState MarkAssigned(
+                    lessonId = lessonId,
+                    studentId = studentId,
+                    mark = Mark.FIVE
+                )
             }
             else
             {
@@ -253,10 +241,12 @@ class MainViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun getMark(id: Long): MarkAssigned = runBlocking {
-        markRepo.getMark(id)
+    private fun updateMark(markAssigned: MarkAssigned)
+    {
+        viewModelScope.launch {
+            markRepo.updateMark(markAssigned)
+        }
     }
-
 
     // endregion
 }

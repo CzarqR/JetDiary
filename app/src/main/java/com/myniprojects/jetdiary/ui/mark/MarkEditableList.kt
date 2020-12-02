@@ -29,7 +29,6 @@ import com.myniprojects.jetdiary.db.mark.Mark
 import com.myniprojects.jetdiary.db.mark.MarkAssigned
 import com.myniprojects.jetdiary.ui.common.EditListState
 import com.myniprojects.jetdiary.ui.common.EditableRow
-import com.myniprojects.jetdiary.ui.common.ItemRowBase
 import com.myniprojects.jetdiary.ui.theme.AppTheme
 import com.myniprojects.jetdiary.ui.theme.AppTypography
 import timber.log.Timber
@@ -69,48 +68,59 @@ class MarkRow(
             update = update
         )
     }
+
+    @Composable
+    override fun addableItem(
+        item: MarkAssigned,
+        save: (MarkAssigned) -> Unit,
+        update: (MarkAssigned) -> Unit
+    )
+    {
+        AddableMarkItem(
+            mark = item,
+            onSave = save,
+            update = update
+        )
+    }
 }
 
 
 @Composable
 fun MarkItem(
     mark: MarkAssigned,
-    onCLick: (MarkAssigned) -> Unit,
-    onLongClick: (MarkAssigned) -> Unit
+    onCLick: (MarkAssigned) -> Unit = {},
+    onLongClick: (MarkAssigned) -> Unit = {}
 )
 {
-    ItemRowBase {
-        Row(
+    Row(
+        modifier = Modifier
+            .clickable(
+                onClick = { onCLick(mark) },
+                onLongClick = { onLongClick(mark) }
+            )
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = mark.mark.markValue.toString(),
             modifier = Modifier
-                .clickable(
-                    onClick = { onCLick(mark) },
-                    onLongClick = { onLongClick(mark) }
-                )
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = mark.mark.markValue.toString(),
-                modifier = Modifier
-                    .padding(
-                        start = dimensionResource(id = R.dimen.default_padding_small),
-                        end = dimensionResource(id = R.dimen.default_padding_small)
-                    ),
-                style = AppTypography.h3,
-                textAlign = TextAlign.Start,
-            )
+                .padding(
+                    start = dimensionResource(id = R.dimen.default_padding_small),
+                    end = dimensionResource(id = R.dimen.default_padding_small)
+                ),
+            style = AppTypography.h3,
+            textAlign = TextAlign.Start,
+        )
 
-            Text(
-                text = mark.note,
-                modifier = Modifier
-                    .weight(1F)
-                    .align(Alignment.Top)
-                    .padding(start = dimensionResource(id = R.dimen.default_padding_small)),
-                style = AppTypography.body1,
-                textAlign = TextAlign.Start,
-            )
-        }
-
+        Text(
+            text = mark.note,
+            modifier = Modifier
+                .weight(1F)
+                .align(Alignment.Top)
+                .padding(start = dimensionResource(id = R.dimen.default_padding_small)),
+            style = AppTypography.body1,
+            textAlign = TextAlign.Start,
+        )
     }
 }
 
@@ -168,82 +178,74 @@ fun MarkEditItem(
 {
     val (mar, setMar) = remember { mutableStateOf(mark) }
 
+    Column(
+        modifier = Modifier
+            .padding(dimensionResource(id = R.dimen.default_padding_small))
+            .fillMaxWidth()
+    ) {
 
-    ItemRowBase {
 
-        Column(
-            modifier = Modifier
-                .padding(dimensionResource(id = R.dimen.default_padding_small))
-                .fillMaxWidth()
-        ) {
+        MarkRow(
+            mark = mar,
+            setMark = setMar,
+            update = update
+        )
 
-            Row {
-                MarkRow(
-                    mark = mar,
-                    setMark = setMar,
-                    update = update
+
+        Row {
+
+            IconButton(
+                onClick = {
+                    delete(mark)
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterVertically),
+                icon = { Icon(asset = Icons.Outlined.Delete) }
+            )
+
+            TextField(
+                modifier = Modifier
+                    .weight(1f),
+                value = mar.note,
+                onValueChange = {
+                    val n = mar.copy(note = it)
+                    setMar(n)
+                    update(n)
+                },
+                onImeActionPerformed = { imeAction, _ ->
+                    Timber.d("imeAction $imeAction")
+                },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                backgroundColor = Color.Transparent,
+                textStyle = AppTypography.h5.copy(
+                    color = AmbientContentColor.current
+                ),
+                label = {
+                    Text(text = stringResource(id = R.string.note))
+                },
+                activeColor = MaterialTheme.colors.secondaryVariant
+            )
+
+            Column(
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.default_padding_small))
+                    .align(Alignment.CenterVertically)
+            ) {
+                IconButton(
+                    onClick = {
+                        onSave(mar)
+                    },
+                    modifier = Modifier,
+                    icon = { Icon(asset = Icons.Outlined.Save) }
                 )
-            }
-
-
-            Row {
 
                 IconButton(
                     onClick = {
-                        Timber.d("Delete")
-                        delete(mark)
+                        onCancel()
                     },
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically),
-                    icon = { Icon(asset = Icons.Outlined.Delete) }
+                    modifier = Modifier,
+                    icon = { Icon(asset = Icons.Outlined.Close) }
                 )
-
-                TextField(
-                    modifier = Modifier
-                        .weight(1f),
-                    value = mar.note,
-                    onValueChange = {
-                        val n = mar.copy(note = it)
-                        setMar(n)
-                        update(n)
-                    },
-                    onImeActionPerformed = { imeAction, _ ->
-                        Timber.d("imeAction $imeAction")
-                    },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    backgroundColor = Color.Transparent,
-                    textStyle = AppTypography.h5.copy(
-                        color = AmbientContentColor.current
-                    ),
-                    label = {
-                        Text(text = stringResource(id = R.string.note))
-                    },
-                    activeColor = MaterialTheme.colors.secondaryVariant
-                )
-
-                Column(
-                    modifier = Modifier
-                        .padding(dimensionResource(id = R.dimen.default_padding_small))
-                        .align(Alignment.CenterVertically)
-                ) {
-                    IconButton(
-                        onClick = {
-                            Timber.d("Save Button")
-                            Timber.d("Mark: $mark || Mar: $mar")
-                            onSave(mar)
-                        },
-                        modifier = Modifier,
-                        icon = { Icon(asset = Icons.Outlined.Save) }
-                    )
-
-                    IconButton(
-                        onClick = {
-                            onCancel()
-                        },
-                        modifier = Modifier,
-                        icon = { Icon(asset = Icons.Outlined.Close) }
-                    )
-                }
             }
         }
     }
@@ -313,12 +315,83 @@ fun MarkEditItem()
 }
 
 
+@Composable
+fun AddableMarkItem(
+    mark: MarkAssigned,
+    onSave: (MarkAssigned) -> Unit,
+    update: (MarkAssigned) -> Unit
+)
+{
+    val (mar, setMar) = remember { mutableStateOf(mark) }
+
+    Column(
+        modifier = Modifier
+            .padding(dimensionResource(id = R.dimen.default_padding_small))
+            .fillMaxWidth()
+    ) {
 
 
+        MarkRow(
+            mark = mar,
+            setMark = setMar,
+            update = update
+        )
+
+        Row {
+
+            TextField(
+                modifier = Modifier
+                    .weight(1f),
+                value = mar.note,
+                onValueChange = {
+                    val n = mar.copy(note = it)
+                    setMar(n)
+                    update(n)
+                },
+                onImeActionPerformed = { imeAction, _ ->
+                    Timber.d("imeAction $imeAction")
+                },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                backgroundColor = Color.Transparent,
+                textStyle = AppTypography.h5.copy(
+                    color = AmbientContentColor.current
+                ),
+                label = {
+                    Text(text = stringResource(id = R.string.note))
+                },
+                activeColor = MaterialTheme.colors.secondaryVariant
+            )
 
 
+            IconButton(
+                onClick = {
+                    onSave(mar)
+                    val n = mar.copy(note = "")
+                    setMar(n)
+                    update(n)
+                },
+                modifier = Modifier.align(Alignment.CenterVertically),
+                icon = { Icon(asset = Icons.Outlined.Save) }
+            )
+
+        }
+    }
+}
 
 
+@Preview(showBackground = true)
+@Composable
+fun AddableMarkItemPreview()
+{
+    AppTheme {
+        AddableMarkItem(MarkAssigned(
+            1,
+            1,
+            Mark.THREE_HALF,
+            "Some note about mark. It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. "
+        ), {}, {})
+    }
+}
 
 
 

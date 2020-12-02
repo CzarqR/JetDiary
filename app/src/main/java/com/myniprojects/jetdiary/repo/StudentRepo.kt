@@ -40,20 +40,14 @@ class StudentRepo @Inject constructor(
                 studentDao.deleteStudent(student)
             }
 
-    suspend fun insertStudent(student: Student): Long =
+    suspend fun insertStudent(student: Student) =
             withContext(Dispatchers.IO) {
                 studentDao.insertStudent(student)
             }
 
-
     suspend fun clearStudentTable() =
             withContext(Dispatchers.IO) {
                 studentDao.clearTable()
-            }
-
-    suspend fun getStudent(id: Long): Student =
-            withContext(Dispatchers.IO) {
-                return@withContext studentDao.getStudent(id)
             }
 
     suspend fun updateStudent(student: Student) =

@@ -13,14 +13,11 @@ interface LessonDao
     suspend fun clearTable()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertLesson(lesson: Lesson): Long
+    suspend fun insertLesson(lesson: Lesson)
 
     @Query("UPDATE lessons SET name=:lessonName WHERE lessonId=:lessonId")
     suspend fun updateLesson(lessonName: String, lessonId: Long)
 
     @Delete
     suspend fun deleteLesson(lesson: Lesson)
-
-    @Query("SELECT * FROM lessons WHERE lessonId=:id")
-    suspend fun getLesson(id: Long): Lesson
 }

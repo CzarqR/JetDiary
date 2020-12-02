@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -25,7 +26,6 @@ import com.myniprojects.jetdiary.R
 import com.myniprojects.jetdiary.db.lesson.Lesson
 import com.myniprojects.jetdiary.ui.common.EditListState
 import com.myniprojects.jetdiary.ui.common.EditableRow
-import com.myniprojects.jetdiary.ui.common.ItemRowBase
 import com.myniprojects.jetdiary.ui.theme.AppTheme
 import com.myniprojects.jetdiary.ui.theme.AppTypography
 import timber.log.Timber
@@ -66,6 +66,22 @@ class LessonRow(
             update = update
         )
     }
+
+    @Composable
+    override fun addableItem(
+        item: Lesson,
+        save: (Lesson) -> Unit,
+        update: (Lesson) -> Unit
+    )
+    {
+        AddableLessonItem(
+            lesson = item,
+            onSave = save,
+            update = update
+        )
+    }
+
+
 }
 
 
@@ -76,20 +92,18 @@ fun LessonItem(
     onLongClick: (Lesson) -> Unit
 )
 {
-    ItemRowBase {
-        Text(
-            text = lesson.name,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(
-                    onClick = { onCLick(lesson) },
-                    onLongClick = { onLongClick(lesson) }
-                )
-                .padding(8.dp),
-            style = AppTypography.h4,
-            textAlign = TextAlign.Start,
-        )
-    }
+    Text(
+        text = lesson.name,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                onClick = { onCLick(lesson) },
+                onLongClick = { onLongClick(lesson) }
+            )
+            .padding(8.dp),
+        style = AppTypography.h4,
+        textAlign = TextAlign.Start,
+    )
 }
 
 
@@ -104,69 +118,65 @@ fun EditLessonItem(
 {
     val (text, setText) = remember { mutableStateOf(lesson.name) }
 
+    Row {
 
-    ItemRowBase {
-        Row {
+        IconButton(
+            onClick = {
+                Timber.d("Delete")
+                delete(lesson)
+            },
+            modifier = Modifier
+                .align(Alignment.CenterVertically),
+            icon = { Icon(asset = Icons.Outlined.Delete) }
+        )
 
-            IconButton(
-                onClick = {
-                    Timber.d("Delete")
-                    delete(lesson)
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterVertically),
-                icon = { Icon(asset = Icons.Outlined.Delete) }
-            )
+        TextField(
+            modifier = Modifier
+                .weight(1f),
+            value = text,
+            onValueChange = {
+                setText(it)
+                update(lesson.copy(name = it))
+            },
+            onImeActionPerformed = { imeAction, _ ->
+                Timber.d("imeAction $imeAction")
+            },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            isErrorValue = text.isBlank(),
+            maxLines = 1,
+            backgroundColor = Color.Transparent,
+            textStyle = AppTypography.h5.copy(
+                color = AmbientContentColor.current
+            ),
+            label = {
+                Text(text = stringResource(id = R.string.classes_name))
+            },
+            activeColor = MaterialTheme.colors.secondaryVariant
+        )
 
-            TextField(
-                modifier = Modifier
-                    .weight(1f),
-                value = text,
-                onValueChange = {
-                    setText(it)
-                    update(lesson.copy(name = it))
-                },
-                onImeActionPerformed = { imeAction, _ ->
-                    Timber.d("imeAction $imeAction")
-                },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                isErrorValue = text.isBlank(),
-                maxLines = 1,
-                backgroundColor = Color.Transparent,
-                textStyle = AppTypography.h5.copy(
-                    color = AmbientContentColor.current
-                ),
-                label = {
-                    Text(text = stringResource(id = R.string.classes_name))
-                },
-                activeColor = MaterialTheme.colors.secondaryVariant
-            )
+        IconButton(
+            onClick = {
+                Timber.d("Save Button")
+                if (text.isNotBlank())
+                {
+                    onSave(lesson)
+                }
+            },
+            modifier = Modifier
+                .align(Alignment.CenterVertically),
+            icon = { Icon(asset = Icons.Outlined.Save) }
+        )
 
-            IconButton(
-                onClick = {
-                    Timber.d("Save Button")
-                    if (text.isNotBlank())
-                    {
-                        onSave(lesson)
-                    }
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterVertically),
-                icon = { Icon(asset = Icons.Outlined.Save) }
-            )
-
-            IconButton(
-                onClick = {
-                    onCancel()
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterVertically),
-                icon = { Icon(asset = Icons.Outlined.Close) }
-            )
-        }
+        IconButton(
+            onClick = {
+                onCancel()
+            },
+            modifier = Modifier
+                .align(Alignment.CenterVertically),
+            icon = { Icon(asset = Icons.Outlined.Close) }
+        )
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
@@ -187,8 +197,72 @@ fun EditLessonItemPreview()
     }
 }
 
+@Composable
+fun AddableLessonItem(
+    lesson: Lesson,
+    onSave: (Lesson) -> Unit,
+    update: (Lesson) -> Unit
+)
+{
+    val (text, setText) = remember { mutableStateOf(lesson.name) }
+
+    Row(
+        modifier = Modifier
+            .padding(
+                start = dimensionResource(id = R.dimen.item_base_margin_h),
+                end = dimensionResource(id = R.dimen.item_base_margin_h),
+                top = dimensionResource(id = R.dimen.item_base_margin_v),
+            )
+    ) {
+
+        TextField(
+            modifier = Modifier
+                .weight(1f),
+            value = text,
+            onValueChange = {
+                setText(it)
+                update(lesson.copy(name = it))
+            },
+            onImeActionPerformed = { imeAction, _ ->
+                Timber.d("imeAction $imeAction")
+            },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            isErrorValue = text.isBlank(),
+            maxLines = 1,
+            backgroundColor = Color.Transparent,
+            textStyle = AppTypography.h5.copy(
+                color = AmbientContentColor.current
+            ),
+            label = {
+                Text(text = stringResource(id = R.string.classes_name))
+            },
+            activeColor = MaterialTheme.colors.secondaryVariant
+        )
+
+        IconButton(
+            onClick = {
+                Timber.d("Save Button")
+                if (text.isNotBlank())
+                {
+                    onSave(lesson)
+                    setText("")
+                }
+            },
+            modifier = Modifier
+                .align(Alignment.CenterVertically),
+            icon = { Icon(asset = Icons.Outlined.Save) }
+        )
+    }
+}
 
 
-
+@Preview(showBackground = true)
+@Composable
+fun AddableLessonItemPreview()
+{
+    AppTheme {
+        AddableLessonItem(Lesson("Mobile programing"), {}, {})
+    }
+}
 
 

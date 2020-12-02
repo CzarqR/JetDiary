@@ -16,5 +16,4 @@ interface LessonStudentCrossDao
 
     @Query("DELETE FROM student_lesson_cross")
     suspend fun clearTable()
-
 }

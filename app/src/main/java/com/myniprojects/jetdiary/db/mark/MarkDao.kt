@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface MarkDao
 {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMark(markAssigned: MarkAssigned): Long
+    suspend fun insertMark(markAssigned: MarkAssigned)
 
     @Query("SELECT * FROM mark_assigned WHERE lessonId=:lessonId AND studentId=:studentId")
     fun getMarks(studentId: Long, lessonId: Long): Flow<List<MarkAssigned>>
@@ -15,9 +15,9 @@ interface MarkDao
     @Query("DELETE FROM mark_assigned")
     suspend fun clearTable()
 
+    @Query("UPDATE mark_assigned SET note=:note, mark=:mark WHERE assignedMarkId=:assignedMarkId")
+    suspend fun updateMark(note: String, mark: Mark, assignedMarkId: Long)
+
     @Delete
     suspend fun deleteMark(markAssigned: MarkAssigned)
-
-    @Query("SELECT * FROM mark_assigned WHERE assignedMarkId=:id")
-    fun getMark(id: Long): MarkAssigned
 }
