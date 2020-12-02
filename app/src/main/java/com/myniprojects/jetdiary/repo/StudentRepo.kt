@@ -12,7 +12,6 @@ import javax.inject.Inject
 class StudentRepo @Inject constructor(
     private val studentDao: StudentDao,
     private val studentCrossDao: LessonStudentCrossDao
-
 )
 {
     val students = studentDao.getStudents()
@@ -36,25 +35,34 @@ class StudentRepo @Inject constructor(
         }
     }
 
-    suspend fun deleteLesson(student: Student) =
+    suspend fun deleteStudent(student: Student) =
             withContext(Dispatchers.IO) {
                 studentDao.deleteStudent(student)
             }
 
-    suspend fun insertLesson(student: Student): Long =
+    suspend fun insertStudent(student: Student): Long =
             withContext(Dispatchers.IO) {
                 studentDao.insertStudent(student)
             }
 
 
-    suspend fun clearLessonsTable() =
+    suspend fun clearStudentTable() =
             withContext(Dispatchers.IO) {
                 studentDao.clearTable()
             }
 
-    suspend fun getLesson(id: Long): Student =
+    suspend fun getStudent(id: Long): Student =
             withContext(Dispatchers.IO) {
                 return@withContext studentDao.getStudent(id)
+            }
+
+    suspend fun updateStudent(student: Student) =
+            withContext(Dispatchers.IO) {
+                studentDao.updateLesson(
+                    name = student.name,
+                    surname = student.surname,
+                    studentId = student.studentId
+                )
             }
 
 }

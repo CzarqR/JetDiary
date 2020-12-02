@@ -1,4 +1,4 @@
-package com.myniprojects.jetdiary.ui.marks
+package com.myniprojects.jetdiary.ui.mark
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -19,7 +19,9 @@ fun MarksBody(
 {
     DefaultBody(
         editableRow = viewModel.markRow,
-        fabClick = {},
+        fabClick = {
+            viewModel.markRow.editListState.addAndEditNewItem()
+        },
         state = state,
         setTitle = setTitle,
         title = stringResource(id = R.string.marks)

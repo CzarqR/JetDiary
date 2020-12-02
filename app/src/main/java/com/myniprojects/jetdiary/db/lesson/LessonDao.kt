@@ -15,6 +15,9 @@ interface LessonDao
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLesson(lesson: Lesson): Long
 
+    @Query("UPDATE lessons SET name=:lessonName WHERE lessonId=:lessonId")
+    suspend fun updateLesson(lessonName: String, lessonId: Long)
+
     @Delete
     suspend fun deleteLesson(lesson: Lesson)
 

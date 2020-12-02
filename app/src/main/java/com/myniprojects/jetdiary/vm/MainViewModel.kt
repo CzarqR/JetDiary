@@ -17,10 +17,8 @@ import com.myniprojects.jetdiary.ui.common.EditListState
 import com.myniprojects.jetdiary.ui.lesson.LessonRow
 import com.myniprojects.jetdiary.ui.mark.MarkRow
 import com.myniprojects.jetdiary.ui.student.StudentRow
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 
 @ExperimentalCoroutinesApi
@@ -46,6 +44,8 @@ class MainViewModel @ViewModelInject constructor(
 
     private val studentsInLesson: Flow<List<Student>> = _selectedLesson.flatMapLatest { lesson ->
 
+        Timber.d("New income")
+
         if (lesson != null)
         {
             studentRepo.getStudentsInLesson(lesson.lessonId).map { lws ->
@@ -61,7 +61,7 @@ class MainViewModel @ViewModelInject constructor(
     private val lessonListState = EditListState(
         flowList = lessonRepo.lessons,
         onSave = {
-            insertLesson(it)
+            updateLesson(it)
         },
         onDelete = {
             viewModelScope.launch {
@@ -88,18 +88,19 @@ class MainViewModel @ViewModelInject constructor(
         }
     )
 
-    val lessonRow = LessonRow(lessonListState)
+    private fun getLesson(id: Long): Lesson = runBlocking(Dispatchers.IO) {
+        lessonRepo.getLesson(id)
+    }
 
-    private fun insertLesson(lesson: Lesson)
+    private fun updateLesson(lesson: Lesson)
     {
         viewModelScope.launch {
-            lessonRepo.insertLesson(lesson)
+            lessonRepo.updateLesson(lesson)
         }
     }
 
-    private fun getLesson(id: Long): Lesson = runBlocking {
-        lessonRepo.getLesson(id)
-    }
+    val lessonRow = LessonRow(lessonListState)
+
 
     private val _navigateToStudents: MutableState<Boolean> = mutableStateOf(false)
     val navigateToStudents: State<Boolean> = _navigateToStudents
@@ -134,11 +135,11 @@ class MainViewModel @ViewModelInject constructor(
     private val studentListState = EditListState(
         flowList = studentsInLesson,
         onSave = {
-            insertStudent(it)
+            updateStudent(it)
         },
         onDelete = {
             viewModelScope.launch {
-                studentRepo.deleteLesson(it)
+                studentRepo.deleteStudent(it)
             }
         },
         clickItem = {
@@ -148,8 +149,10 @@ class MainViewModel @ViewModelInject constructor(
         },
         generateNewItem = {
 
+            Timber.d("Generate")
+
             val id = runBlocking {
-                studentRepo.insertLesson(Student())
+                studentRepo.insertStudent(Student())
             }
 
             return@EditListState getStudent(id)
@@ -168,12 +171,19 @@ class MainViewModel @ViewModelInject constructor(
     private fun insertStudent(student: Student)
     {
         viewModelScope.launch {
-            studentRepo.insertLesson(student)
+            studentRepo.insertStudent(student)
+        }
+    }
+
+    private fun updateStudent(student: Student)
+    {
+        viewModelScope.launch {
+            studentRepo.updateStudent(student)
         }
     }
 
     private fun getStudent(id: Long): Student = runBlocking {
-        studentRepo.getLesson(id)
+        studentRepo.getStudent(id)
     }
 
     private val _navigateToMarks: MutableState<Boolean> = mutableStateOf(false)
@@ -186,17 +196,18 @@ class MainViewModel @ViewModelInject constructor(
 
     // endregion
 
-
     // region marks
 
 
     private val markListState = EditListState(
         flowList = studentsMarks,
         onSave = {
+            Timber.d("onSave vm")
+            insertMark(it)
         },
         onDelete = {
             viewModelScope.launch {
-
+                markRepo.deleteMark(it)
             }
         },
         clickItem = {
@@ -204,14 +215,47 @@ class MainViewModel @ViewModelInject constructor(
         },
         generateNewItem = {
 
-            return@EditListState MarkAssigned(0, 0, Mark.FIVE)
+            val studentId = _selectedStudent.value?.studentId
+            val lessonId = _selectedLesson.value?.lessonId
+
+            if (lessonId != null && studentId != null)
+            {
+                val id = runBlocking {
+
+                    markRepo.insertMark(
+                        MarkAssigned(
+                            lessonId = lessonId,
+                            studentId = studentId,
+                            mark = Mark.FIVE
+                        )
+                    )
+                }
+
+                return@EditListState getMark(id)
+            }
+            else
+            {
+                throw Exception("Student or lesson unselected")
+            }
         },
-        {
+        formatItem = {
             return@EditListState it
         }
     )
 
     val markRow = MarkRow(markListState)
+
+
+    private fun insertMark(markAssigned: MarkAssigned)
+    {
+        viewModelScope.launch {
+            markRepo.insertMark(markAssigned)
+        }
+    }
+
+    private fun getMark(id: Long): MarkAssigned = runBlocking {
+        markRepo.getMark(id)
+    }
 
 
     // endregion

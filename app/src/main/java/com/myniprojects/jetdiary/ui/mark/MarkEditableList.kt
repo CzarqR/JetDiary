@@ -1,16 +1,26 @@
 package com.myniprojects.jetdiary.ui.mark
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Save
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
@@ -22,6 +32,7 @@ import com.myniprojects.jetdiary.ui.common.EditableRow
 import com.myniprojects.jetdiary.ui.common.ItemRowBase
 import com.myniprojects.jetdiary.ui.theme.AppTheme
 import com.myniprojects.jetdiary.ui.theme.AppTypography
+import timber.log.Timber
 
 class MarkRow(
     override val editListState: EditListState<MarkAssigned>
@@ -85,7 +96,7 @@ fun MarkItem(
                         start = dimensionResource(id = R.dimen.default_padding_small),
                         end = dimensionResource(id = R.dimen.default_padding_small)
                     ),
-                style = AppTypography.h3.copy(fontWeight = FontWeight.Medium),
+                style = AppTypography.h3,
                 textAlign = TextAlign.Start,
             )
 
@@ -159,8 +170,129 @@ fun MarkEditItem(
 
 
     ItemRowBase {
-        Row {
-            Text(text = "Todo")
+
+        Column(
+            modifier = Modifier
+                .padding(dimensionResource(id = R.dimen.default_padding_small))
+                .fillMaxWidth()
+        ) {
+
+            Row {
+                MarkRow(
+                    mark = mar,
+                    setMark = setMar,
+                    update = update
+                )
+            }
+
+
+            Row {
+
+                IconButton(
+                    onClick = {
+                        Timber.d("Delete")
+                        delete(mark)
+                    },
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically),
+                    icon = { Icon(asset = Icons.Outlined.Delete) }
+                )
+
+                TextField(
+                    modifier = Modifier
+                        .weight(1f),
+                    value = mar.note,
+                    onValueChange = {
+                        val n = mar.copy(note = it)
+                        setMar(n)
+                        update(n)
+                    },
+                    onImeActionPerformed = { imeAction, _ ->
+                        Timber.d("imeAction $imeAction")
+                    },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    backgroundColor = Color.Transparent,
+                    textStyle = AppTypography.h5.copy(
+                        color = AmbientContentColor.current
+                    ),
+                    label = {
+                        Text(text = stringResource(id = R.string.note))
+                    },
+                    activeColor = MaterialTheme.colors.secondaryVariant
+                )
+
+                Column(
+                    modifier = Modifier
+                        .padding(dimensionResource(id = R.dimen.default_padding_small))
+                        .align(Alignment.CenterVertically)
+                ) {
+                    IconButton(
+                        onClick = {
+                            Timber.d("Save Button")
+                            Timber.d("Mark: $mark || Mar: $mar")
+                            onSave(mar)
+                        },
+                        modifier = Modifier,
+                        icon = { Icon(asset = Icons.Outlined.Save) }
+                    )
+
+                    IconButton(
+                        onClick = {
+                            onCancel()
+                        },
+                        modifier = Modifier,
+                        icon = { Icon(asset = Icons.Outlined.Close) }
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun MarkRow(
+    mark: MarkAssigned,
+    setMark: (MarkAssigned) -> Unit,
+    update: (MarkAssigned) -> Unit
+)
+{
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Mark.values().forEach {
+
+            Text(
+                text = it.markText,
+                modifier = Modifier
+                    .weight(1F)
+                    .clickable(
+                        onClick =
+                        {
+                            val n = mark.copy(mark = it)
+                            setMark(n)
+                            update(n)
+                        }),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.h5,
+                color =
+                if (mark.mark == it)
+                {
+                    if (isSystemInDarkTheme())
+                    {
+                        MaterialTheme.colors.secondaryVariant
+                    }
+                    else
+                    {
+                        MaterialTheme.colors.primaryVariant
+                    }
+                }
+                else
+                {
+                    AmbientContentColor.current
+                }
+            )
         }
     }
 }
@@ -179,3 +311,21 @@ fun MarkEditItem()
         ), {}, {}, {}, {})
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

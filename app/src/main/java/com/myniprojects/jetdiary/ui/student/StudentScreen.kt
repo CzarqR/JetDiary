@@ -8,6 +8,7 @@ import com.myniprojects.jetdiary.R
 import com.myniprojects.jetdiary.ui.common.DefaultBody
 import com.myniprojects.jetdiary.vm.MainViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import timber.log.Timber
 
 @ExperimentalCoroutinesApi
 @Composable
@@ -19,7 +20,10 @@ fun StudentBody(
 {
     DefaultBody(
         editableRow = viewModel.studentRow,
-        fabClick = {},
+        fabClick = {
+            Timber.d("Click fab")
+            viewModel.studentRow.editListState.addAndEditNewItem()
+        },
         state = state,
         setTitle = setTitle,
         title = stringResource(id = R.string.students)

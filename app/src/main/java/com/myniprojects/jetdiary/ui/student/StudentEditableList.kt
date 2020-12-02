@@ -147,8 +147,9 @@ fun EditStudentItem(
                     modifier = Modifier.fillMaxWidth(),
                     value = stud.surname,
                     onValueChange = {
-                        setStudent(stud.copy(surname = it))
-                        update(stud)
+                        val n = stud.copy(surname = it)
+                        setStudent(n)
+                        update(n)
                     },
                     onImeActionPerformed = { imeAction, _ ->
                         Timber.d("imeAction $imeAction")
@@ -202,7 +203,7 @@ fun EditStudentItem(
                         Timber.d("Save Button")
                         if (stud.surname.isNotBlank() && stud.name.isNotBlank())
                         {
-                            onSave(student)
+                            onSave(stud)
                         }
                     },
                     modifier = Modifier,

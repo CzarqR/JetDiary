@@ -47,4 +47,12 @@ class LessonRepo @Inject constructor(
             withContext(Dispatchers.IO) {
                 return@withContext lessonDao.getLesson(id)
             }
+
+    suspend fun updateLesson(lesson: Lesson) =
+            withContext(Dispatchers.IO) {
+                lessonDao.updateLesson(
+                    lessonName = lesson.name,
+                    lessonId = lesson.lessonId
+                )
+            }
 }

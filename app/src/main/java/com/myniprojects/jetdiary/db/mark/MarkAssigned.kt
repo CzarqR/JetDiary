@@ -3,6 +3,7 @@ package com.myniprojects.jetdiary.db.mark
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
+import androidx.room.ForeignKey.NO_ACTION
 import androidx.room.PrimaryKey
 import com.myniprojects.jetdiary.db.lesson.Lesson
 import com.myniprojects.jetdiary.db.student.Student
@@ -14,13 +15,13 @@ import com.myniprojects.jetdiary.db.student.Student
             entity = Student::class,
             parentColumns = ["studentId"],
             childColumns = ["studentId"],
-            onDelete = CASCADE
+            onDelete = CASCADE,
         ),
         ForeignKey(
             entity = Lesson::class,
             parentColumns = ["lessonId"],
             childColumns = ["lessonId"],
-            onDelete = CASCADE
+            onDelete = CASCADE,
         )
     ]
 )

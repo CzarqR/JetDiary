@@ -12,7 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import com.myniprojects.jetdiary.ui.lesson.LessonBody
-import com.myniprojects.jetdiary.ui.marks.MarksBody
+import com.myniprojects.jetdiary.ui.mark.MarksBody
 import com.myniprojects.jetdiary.ui.student.StudentBody
 import com.myniprojects.jetdiary.utils.Constants.LESSON_SCREEN_ROUTE
 import com.myniprojects.jetdiary.utils.Constants.MARKS_SCREEN_ROUTE
