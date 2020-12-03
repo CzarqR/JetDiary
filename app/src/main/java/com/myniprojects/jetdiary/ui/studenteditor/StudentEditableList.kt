@@ -28,17 +28,16 @@ import com.myniprojects.jetdiary.ui.theme.AppTheme
 import com.myniprojects.jetdiary.ui.theme.AppTypography
 import timber.log.Timber
 
-class StudentRow(override val editListState: EditListState<Student>) : EditableRow<Student>
+class StudentRow(override val editListState: EditListState<Pair<Student, Boolean>>) : EditableRow<Pair<Student, Boolean>>
 {
-
     @Composable
     override fun defaultItem(
-        item: Student,
-        onClick: (Student) -> Unit,
-        onLongClick: (Student) -> Unit
+        item: Pair<Student, Boolean>,
+        onClick: (Pair<Student, Boolean>) -> Unit,
+        onLongClick: (Pair<Student, Boolean>) -> Unit
     )
     {
-        StudentItem(
+        StudentCheckItem(
             student = item,
             onCLick = onClick,
             onLongClick = onLongClick
@@ -47,11 +46,11 @@ class StudentRow(override val editListState: EditListState<Student>) : EditableR
 
     @Composable
     override fun editableItem(
-        item: Student,
-        save: (Student) -> Unit,
+        item: Pair<Student, Boolean>,
+        save: (Pair<Student, Boolean>) -> Unit,
         cancel: () -> Unit,
-        delete: (Student) -> Unit,
-        update: (Student) -> Unit
+        delete: (Pair<Student, Boolean>) -> Unit,
+        update: (Pair<Student, Boolean>) -> Unit
     )
     {
         EditStudentItem(
@@ -64,7 +63,11 @@ class StudentRow(override val editListState: EditListState<Student>) : EditableR
     }
 
     @Composable
-    override fun addableItem(item: Student, save: (Student) -> Unit, update: (Student) -> Unit)
+    override fun addableItem(
+        item: Pair<Student, Boolean>,
+        save: (Pair<Student, Boolean>) -> Unit,
+        update: (Pair<Student, Boolean>) -> Unit
+    )
     {
         AddableStudentItem(
             student = item,
@@ -109,18 +112,75 @@ fun StudentItem(
             textAlign = TextAlign.Start,
         )
     }
-
-
 }
 
 
 @Composable
+fun StudentCheckItem(
+    student: Pair<Student, Boolean>,
+    onCLick: (Pair<Student, Boolean>) -> Unit,
+    onLongClick: (Pair<Student, Boolean>) -> Unit
+)
+{
+
+    val (isChecked, setIsChecked) = remember { mutableStateOf(student.second) }
+
+    Row(
+        modifier = Modifier
+            .clickable(
+                onClick = { },
+                onLongClick = { onLongClick(student) }
+            )
+            .padding(dimensionResource(id = R.dimen.default_padding_small))
+    ) {
+
+        Checkbox(
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .padding(dimensionResource(id = R.dimen.default_padding_small)),
+            checked = isChecked,
+            onCheckedChange = {
+                Timber.d("Click")
+                onCLick(student.first to it)
+                setIsChecked(it)
+            })
+
+        Text(
+            text = student.first.surname,
+            modifier = Modifier.alignByBaseline(),
+            style = AppTypography.h4,
+            textAlign = TextAlign.Start,
+        )
+
+        Text(
+            text = student.first.name,
+            modifier = Modifier
+                .padding(start = dimensionResource(id = R.dimen.default_padding_small))
+                .alignByBaseline()
+                .drawOpacity(0.8f),
+            style = AppTypography.h5,
+            textAlign = TextAlign.Start,
+        )
+    }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun LessonItemPreview()
+{
+    AppTheme {
+        StudentCheckItem(Student("Leo", "Messi") to false, {}, {})
+    }
+}
+
+@Composable
 fun EditStudentItem(
-    student: Student,
-    onSave: (Student) -> Unit,
+    student: Pair<Student, Boolean>,
+    onSave: (Pair<Student, Boolean>) -> Unit,
     onCancel: () -> Unit,
-    delete: (Student) -> Unit,
-    update: (Student) -> Unit
+    delete: (Pair<Student, Boolean>) -> Unit,
+    update: (Pair<Student, Boolean>) -> Unit
 )
 {
     val (stud, setStudent) = remember { mutableStateOf(student) }
@@ -154,9 +214,9 @@ fun EditStudentItem(
 
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = stud.surname,
+                value = stud.first.surname,
                 onValueChange = {
-                    val n = stud.copy(surname = it)
+                    val n = stud.copy(first = stud.first.copy(surname = it))
                     setStudent(n)
                     update(n)
                 },
@@ -164,7 +224,7 @@ fun EditStudentItem(
                     Timber.d("imeAction $imeAction")
                 },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                isErrorValue = stud.surname.isBlank(),
+                isErrorValue = stud.first.surname.isBlank(),
                 maxLines = 1,
                 backgroundColor = Color.Transparent,
                 textStyle = AppTypography.h5.copy(
@@ -181,16 +241,17 @@ fun EditStudentItem(
             TextField(
                 modifier = Modifier
                     .fillMaxWidth(),
-                value = stud.name,
+                value = stud.first.name,
                 onValueChange = {
-                    setStudent(stud.copy(name = it))
-                    update(stud)
+                    val n = stud.copy(first = stud.first.copy(name = it))
+                    setStudent(n)
+                    update(n)
                 },
                 onImeActionPerformed = { imeAction, _ ->
                     Timber.d("imeAction $imeAction")
                 },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                isErrorValue = stud.name.isBlank(),
+                isErrorValue = stud.first.name.isBlank(),
                 maxLines = 1,
                 backgroundColor = Color.Transparent,
                 textStyle = AppTypography.h5.copy(
@@ -210,7 +271,7 @@ fun EditStudentItem(
             IconButton(
                 onClick = {
                     Timber.d("Save Button")
-                    if (stud.surname.isNotBlank() && stud.name.isNotBlank())
+                    if (stud.first.surname.isNotBlank() && stud.first.name.isNotBlank())
                     {
                         onSave(stud)
                     }
@@ -233,7 +294,7 @@ fun EditStudentItem(
 
 @Preview(showBackground = true)
 @Composable
-fun LessonItemPreview()
+fun StudentItemPreview()
 {
     AppTheme {
         StudentItem(Student("Leo", "Messi"), {}, {})
@@ -246,16 +307,16 @@ fun LessonItemPreview()
 fun EditLessonItemPreview()
 {
     AppTheme {
-        EditStudentItem(Student("Leo", "Messi"), {}, {}, {}, {})
+        EditStudentItem(Student("Leo", "Messi") to true, {}, {}, {}, {})
     }
 }
 
 
 @Composable
 fun AddableStudentItem(
-    student: Student,
-    onSave: (Student) -> Unit,
-    update: (Student) -> Unit
+    student: Pair<Student, Boolean>,
+    onSave: (Pair<Student, Boolean>) -> Unit,
+    update: (Pair<Student, Boolean>) -> Unit
 )
 {
     val (stud, setStudent) = remember { mutableStateOf(student) }
@@ -279,9 +340,9 @@ fun AddableStudentItem(
 
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = stud.surname,
+                value = stud.first.surname,
                 onValueChange = {
-                    val n = stud.copy(surname = it)
+                    val n = stud.copy(first = stud.first.copy(surname = it))
                     setStudent(n)
                     update(n)
                 },
@@ -289,7 +350,7 @@ fun AddableStudentItem(
                     Timber.d("imeAction $imeAction")
                 },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                isErrorValue = stud.surname.isBlank(),
+                isErrorValue = stud.first.surname.isBlank(),
                 maxLines = 1,
                 backgroundColor = Color.Transparent,
                 textStyle = AppTypography.h5.copy(
@@ -306,16 +367,16 @@ fun AddableStudentItem(
             TextField(
                 modifier = Modifier
                     .fillMaxWidth(),
-                value = stud.name,
+                value = stud.first.name,
                 onValueChange = {
-                    setStudent(stud.copy(name = it))
+                    setStudent(stud.copy(first = stud.first.copy(name = it)))
                     update(stud)
                 },
                 onImeActionPerformed = { imeAction, _ ->
                     Timber.d("imeAction $imeAction")
                 },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                isErrorValue = stud.name.isBlank(),
+                isErrorValue = stud.first.name.isBlank(),
                 maxLines = 1,
                 backgroundColor = Color.Transparent,
                 textStyle = AppTypography.h5.copy(
@@ -331,10 +392,10 @@ fun AddableStudentItem(
         IconButton(
             onClick = {
                 Timber.d("Save Button")
-                if (stud.surname.isNotBlank() && stud.name.isNotBlank())
+                if (stud.first.surname.isNotBlank() && stud.first.name.isNotBlank())
                 {
                     onSave(stud)
-                    setStudent(Student())
+                    setStudent(Student() to false)
                 }
             },
             icon = { Icon(asset = Icons.Outlined.Save) }
@@ -347,6 +408,6 @@ fun AddableStudentItem(
 fun AddableLessonItemPreview()
 {
     AppTheme {
-        AddableStudentItem(Student("Leo", "Messi"), {}, {})
+        AddableStudentItem(Student("Leo", "Messi") to true, {}, {})
     }
 }

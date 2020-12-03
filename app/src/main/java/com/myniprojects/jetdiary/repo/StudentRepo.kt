@@ -35,6 +35,16 @@ class StudentRepo @Inject constructor(
         }
     }
 
+    suspend fun assignStudentToLesson(lessonId: Long, studentId: Long) =
+            withContext(Dispatchers.IO) {
+                studentCrossDao.assignStudentToLesson(
+                    LessonStudentCrossRef(
+                        studentId = studentId,
+                        lessonId = lessonId
+                    )
+                )
+            }
+
     suspend fun deleteStudent(student: Student) =
             withContext(Dispatchers.IO) {
                 studentDao.deleteStudent(student)
@@ -59,4 +69,11 @@ class StudentRepo @Inject constructor(
                 )
             }
 
+    suspend fun deleteStudentToLesson(lessonId: Long, studentId: Long) =
+            withContext(Dispatchers.IO) {
+                studentCrossDao.deleteStudentToLesson(
+                    studentId = studentId,
+                    lessonId = lessonId
+                )
+            }
 }

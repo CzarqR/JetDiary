@@ -14,9 +14,11 @@ import androidx.navigation.compose.rememberNavController
 import com.myniprojects.jetdiary.ui.lesson.LessonBody
 import com.myniprojects.jetdiary.ui.mark.MarksBody
 import com.myniprojects.jetdiary.ui.studenteditor.StudentBody
+import com.myniprojects.jetdiary.ui.studentlesson.StudentLessonBody
 import com.myniprojects.jetdiary.utils.Constants.LESSON_SCREEN_ROUTE
 import com.myniprojects.jetdiary.utils.Constants.MARKS_SCREEN_ROUTE
-import com.myniprojects.jetdiary.utils.Constants.STUDENT_SCREEN_ROUTE
+import com.myniprojects.jetdiary.utils.Constants.STUDENT_EDITOR_SCREEN_ROUTE
+import com.myniprojects.jetdiary.utils.Constants.STUDENT_LESSON_SCREEN_ROUTE
 import com.myniprojects.jetdiary.vm.MainViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -38,17 +40,24 @@ fun App(
     }
 
     // check navigation state and navigate
-    if (viewModel.navigateToStudents.value)
+    when
     {
-        navController.navigate(route = STUDENT_SCREEN_ROUTE)
-        viewModel.studentsNavigated()
+        viewModel.navigateToStudents.value ->
+        {
+            navController.navigate(route = STUDENT_LESSON_SCREEN_ROUTE)
+            viewModel.studentsNavigated()
+        }
+        viewModel.navigateToMarks.value ->
+        {
+            navController.navigate(route = MARKS_SCREEN_ROUTE)
+            viewModel.marksNavigated()
+        }
+        viewModel.navigateToStudentEditor.value ->
+        {
+            navController.navigate(route = STUDENT_EDITOR_SCREEN_ROUTE)
+            viewModel.studentEditorNavigated()
+        }
     }
-    else if (viewModel.navigateToMarks.value)
-    {
-        navController.navigate(route = MARKS_SCREEN_ROUTE)
-        viewModel.marksNavigated()
-    }
-
 
 
 
@@ -58,6 +67,7 @@ fun App(
             {
                 TopAppBar(
                     title = { Text(text = title) },
+                    backgroundColor = MaterialTheme.colors.primary,
                     navigationIcon = {
                         IconButton(onClick = {
                             navController.popBackStack()
@@ -70,6 +80,7 @@ fun App(
             else
             {
                 TopAppBar(
+                    backgroundColor = MaterialTheme.colors.primary,
                     title = { Text(text = title) },
                 )
             }
@@ -103,14 +114,25 @@ fun AppBody(
                 setTitle = setTitle
             )
         }
+
         composable(
-            route = STUDENT_SCREEN_ROUTE
+            route = STUDENT_LESSON_SCREEN_ROUTE
+        ) {
+            StudentLessonBody(
+                viewModel = viewModel,
+                setTitle = setTitle
+            )
+        }
+
+        composable(
+            route = STUDENT_EDITOR_SCREEN_ROUTE
         ) {
             StudentBody(
                 viewModel = viewModel,
                 setTitle = setTitle
             )
         }
+
         composable(
             route = MARKS_SCREEN_ROUTE
         ) {
@@ -120,7 +142,6 @@ fun AppBody(
             )
         }
     }
-
 }
 
 

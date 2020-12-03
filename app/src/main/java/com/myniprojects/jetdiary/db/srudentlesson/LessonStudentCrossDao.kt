@@ -16,4 +16,7 @@ interface LessonStudentCrossDao
 
     @Query("DELETE FROM student_lesson_cross")
     suspend fun clearTable()
+
+    @Query("DELETE FROM student_lesson_cross WHERE studentId=:studentId AND lessonId=:lessonId ")
+    suspend fun deleteStudentToLesson(lessonId: Long, studentId: Long)
 }

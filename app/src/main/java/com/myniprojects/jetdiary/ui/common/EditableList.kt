@@ -3,7 +3,7 @@ package com.myniprojects.jetdiary.ui.common
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumnFor
+import androidx.compose.foundation.lazy.LazyColumnForIndexed
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
@@ -12,12 +12,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.unit.Dp
 import com.myniprojects.jetdiary.R
 
 
 @Composable
 fun ItemRowBase(
-    body: @Composable () -> Unit
+    bottomPadding: Dp? = null,
+    body: @Composable () -> Unit,
 )
 {
     Card(
@@ -27,7 +29,7 @@ fun ItemRowBase(
                 start = dimensionResource(id = R.dimen.item_base_margin_h),
                 end = dimensionResource(id = R.dimen.item_base_margin_h),
                 top = dimensionResource(id = R.dimen.item_base_margin_v),
-                bottom = dimensionResource(id = R.dimen.item_base_margin_v)
+                bottom = bottomPadding ?: dimensionResource(id = R.dimen.item_base_margin_v)
             ),
         elevation = dimensionResource(id = R.dimen.card_elevation),
     ) {
@@ -70,7 +72,7 @@ fun <T> EditableList(
 {
     val list: List<T> by editableRow.editListState.flowList.collectAsState(listOf())
 
-    LazyColumnFor(
+    LazyColumnForIndexed(
         modifier = modifier
             .padding(
                 top = dimensionResource(id = R.dimen.item_base_margin_v),
@@ -78,8 +80,12 @@ fun <T> EditableList(
             ),
         items = list,
         state = state
-    ) { item ->
-        ItemRowBase {
+    ) { i, item ->
+
+
+        ItemRowBase(
+            bottomPadding = if (i == list.size - 1) dimensionResource(id = R.dimen.last_card_padding) else null
+        ) {
             if (item == editableRow.editListState.currentEditItem)
             {
                 editableRow.editableItem(

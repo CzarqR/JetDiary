@@ -3,11 +3,13 @@ package com.myniprojects.jetdiary.ui.mark
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
-import com.myniprojects.jetdiary.R
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import com.myniprojects.jetdiary.db.student.Student
 import com.myniprojects.jetdiary.ui.common.DefaultEditableBody
 import com.myniprojects.jetdiary.vm.MainViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+
 
 @ExperimentalCoroutinesApi
 @Composable
@@ -17,10 +19,15 @@ fun MarksBody(
     state: LazyListState = rememberLazyListState()
 )
 {
+    val student: Student? by viewModel.selectedStudent.collectAsState(null)
+
+    student?.let {
+        setTitle("${it.surname} ${it.name}")
+    }
+
+
     DefaultEditableBody(
         editableRow = viewModel.markRow,
-        state = state,
-        setTitle = setTitle,
-        title = stringResource(id = R.string.marks)
+        state = state
     )
 }

@@ -30,19 +30,24 @@ class MainViewModel @ViewModelInject constructor(
 {
     init
     {
-        viewModelScope.launch {
-            lessonRepo.mockData()
-            studentRepo.mockData()
-            markRepo.mockData()
-        }
+
+        //add fake data
+//            viewModelScope.launch {
+//            lessonRepo.mockData()
+//            studentRepo.mockData()
+//            markRepo.mockData()
+//        }
+
     }
+
 
 
     // region lesson
 
     private val _selectedLesson: MutableStateFlow<Lesson?> = MutableStateFlow(null)
+    val selectedLesson: StateFlow<Lesson?> = _selectedLesson
 
-    private val studentsInLesson: Flow<List<Student>> = _selectedLesson.flatMapLatest { lesson ->
+    val studentsInLesson: Flow<List<Student>> = _selectedLesson.flatMapLatest { lesson ->
 
         Timber.d("New income")
 
@@ -114,56 +119,85 @@ class MainViewModel @ViewModelInject constructor(
 
     // endregion
 
-    // region students
+    // region students editor
 
-    private val _selectedStudent: MutableStateFlow<Student?> = MutableStateFlow(null)
+    private val allStudents = studentRepo.students
 
-    private val studentsMarks: Flow<List<MarkAssigned>> = _selectedStudent.flatMapLatest { student ->
 
-        val lesson = _selectedLesson.value
-
-        if (student != null && lesson != null)
-        {
-            markRepo.getMarks(lessonId = lesson.lessonId, studentId = student.studentId)
+    private val studentsInLessonEditor = allStudents.combine(
+        studentsInLesson
+    ) { all, isIn ->
+        val l = mutableListOf<Pair<Student, Boolean>>()
+        all.forEach {
+            l.add(it to isIn.contains(it))
         }
-        else
-        {
-            flowOf()
-        }
+        l
     }
 
 
-    private val studentListState = EditListState(
-        flowList = studentsInLesson,
+    private val studentListState = EditListState<Pair<Student, Boolean>>(
+        flowList = studentsInLessonEditor,
         update = {
-            updateStudent(it)
+            updateStudent(it.first)
         },
         insert = {
-            insertStudent(it)
+            viewModelScope.launch {
+                insertStudent(it.first)
+            }
         },
         onDelete = {
             viewModelScope.launch {
-                studentRepo.deleteStudent(it)
+                studentRepo.deleteStudent(it.first)
             }
         },
         clickItem = {
             Timber.d("Item clicked $it")
-            _selectedStudent.value = it
-            _navigateToMarks.value = true
+            Timber.d("Insert")
+            viewModelScope.launch {
+                if (it.second) // add
+                {
+                    val lesson = _selectedLesson.value
+                    if (lesson != null)
+                    {
+                        Timber.d("Not null")
+
+                        studentRepo.assignStudentToLesson(
+                            lessonId = lesson.lessonId,
+                            studentId = it.first.studentId
+                        )
+                    }
+                }
+                else // remove
+                {
+                    val lesson = _selectedLesson.value
+                    if (lesson != null)
+                    {
+                        Timber.d("Not null")
+
+                        studentRepo.deleteStudentToLesson(
+                            lessonId = lesson.lessonId,
+                            studentId = it.first.studentId
+                        )
+                    }
+                }
+
+            }
         },
         generateNewItem = {
-            return@EditListState Student()
+            return@EditListState Student() to false
         },
         {
             return@EditListState it.copy(
-                name = it.name.trim(),
-                surname = it.surname.trim()
+                first = it.first.copy(
+                    name = it.first.name.trim(),
+                    surname = it.first.surname.trim()
+                )
             )
         }
     )
 
 
-    val studentRow = StudentRow(studentListState)
+    val studentEditorRow = StudentRow(studentListState)
 
     private fun insertStudent(student: Student)
     {
@@ -179,8 +213,50 @@ class MainViewModel @ViewModelInject constructor(
         }
     }
 
+
+    // endregion
+
+    //region students
+
+
+    private val _selectedStudent: MutableStateFlow<Student?> = MutableStateFlow(null)
+    val selectedStudent: StateFlow<Student?> = (_selectedStudent)
+
+    private val studentsMarks: Flow<List<MarkAssigned>> = _selectedStudent.flatMapLatest { student ->
+
+        val lesson = _selectedLesson.value
+
+        if (student != null && lesson != null)
+        {
+            markRepo.getMarks(lessonId = lesson.lessonId, studentId = student.studentId)
+        }
+        else
+        {
+            flowOf()
+        }
+    }
+
+    private val _navigateToStudentEditor: MutableState<Boolean> = mutableStateOf(false)
+    val navigateToStudentEditor: State<Boolean> = _navigateToStudentEditor
+
+    fun navigateToStudentEditor()
+    {
+        _navigateToStudentEditor.value = true
+    }
+
+    fun studentEditorNavigated()
+    {
+        _navigateToStudentEditor.value = false
+    }
+
     private val _navigateToMarks: MutableState<Boolean> = mutableStateOf(false)
     val navigateToMarks: State<Boolean> = _navigateToMarks
+
+    fun navigateToMarks(student: Student)
+    {
+        _selectedStudent.value = student
+        _navigateToMarks.value = true
+    }
 
     fun marksNavigated()
     {

@@ -6,4 +6,5 @@
     <dimen name="default_padding_small">8dp</dimen>
     <dimen name="fab_padding">16dp</dimen>
     <dimen name="nav_drawer_cut">14dp</dimen>
+    <dimen name="last_card_padding">80dp</dimen>
 </resources>
