@@ -32,6 +32,7 @@ import com.myniprojects.jetdiary.ui.common.EditableRow
 import com.myniprojects.jetdiary.ui.theme.AppTheme
 import com.myniprojects.jetdiary.ui.theme.AppTypography
 import timber.log.Timber
+import java.util.*
 
 class MarkRow(
     override val editListState: EditListState<MarkAssigned>
@@ -365,7 +366,7 @@ fun AddableMarkItem(
 
             IconButton(
                 onClick = {
-                    onSave(mar)
+                    onSave(mar.copy(date = Date(System.currentTimeMillis())))
                     val n = mar.copy(note = "")
                     setMar(n)
                     update(n)

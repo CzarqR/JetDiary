@@ -1,5 +1,6 @@
 package com.myniprojects.jetdiary.vm
 
+import android.text.format.DateUtils
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +21,8 @@ import com.myniprojects.jetdiary.ui.studenteditor.StudentRow
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
+import java.util.*
+
 
 @ExperimentalCoroutinesApi
 class MainViewModel @ViewModelInject constructor(
@@ -30,16 +33,14 @@ class MainViewModel @ViewModelInject constructor(
 {
     init
     {
-
         //add fake data
-//            viewModelScope.launch {
+//        viewModelScope.launch {
 //            lessonRepo.mockData()
 //            studentRepo.mockData()
 //            markRepo.mockData()
 //        }
 
     }
-
 
 
     // region lesson
@@ -323,6 +324,27 @@ class MainViewModel @ViewModelInject constructor(
             markRepo.updateMark(markAssigned)
         }
     }
+
+    // endregion
+
+
+    // region stats
+
+    val todayMarks: Flow<Long> = markRepo.getAllMarks().flatMapLatest {
+
+        var i = 0L
+
+        it.forEach { mark ->
+            if (DateUtils.isToday(mark.date.time))
+                i++
+        }
+
+        flowOf(i)
+    }
+
+    val allMarksCount = markRepo.getMarksCount()
+    val lessonsCount = lessonRepo.getLessonsCount()
+    val studentsCount = studentRepo.getStudentsCount()
 
     // endregion
 }

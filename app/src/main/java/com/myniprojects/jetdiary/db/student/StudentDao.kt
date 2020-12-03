@@ -18,6 +18,9 @@ interface StudentDao
     @Query("UPDATE students SET name=:name, surname=:surname WHERE studentId=:studentId")
     suspend fun updateLesson(name: String, surname: String, studentId: Long)
 
+    @Query("SELECT COUNT(studentId) FROM students")
+    fun getStudentsCount(): Flow<Long>
+
     @Delete
     suspend fun deleteStudent(student: Student)
 

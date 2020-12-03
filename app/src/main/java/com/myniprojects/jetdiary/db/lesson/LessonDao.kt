@@ -1,6 +1,7 @@
 package com.myniprojects.jetdiary.db.lesson
 
 import androidx.room.*
+import com.myniprojects.jetdiary.db.mark.MarkAssigned
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -11,6 +12,9 @@ interface LessonDao
 
     @Query("DELETE FROM lessons")
     suspend fun clearTable()
+
+    @Query("SELECT COUNT(lessonId) FROM lessons")
+    fun getLessonCount(): Flow<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLesson(lesson: Lesson)

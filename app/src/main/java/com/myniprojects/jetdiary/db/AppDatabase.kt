@@ -5,6 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.myniprojects.jetdiary.db.lesson.Lesson
 import com.myniprojects.jetdiary.db.lesson.LessonDao
+import com.myniprojects.jetdiary.db.mark.DateConverter
 import com.myniprojects.jetdiary.db.mark.MarkAssigned
 import com.myniprojects.jetdiary.db.mark.MarkConverter
 import com.myniprojects.jetdiary.db.mark.MarkDao
@@ -23,7 +24,10 @@ import com.myniprojects.jetdiary.db.student.StudentDao
     version = 1,
     exportSchema = false
 )
-@TypeConverters(MarkConverter::class)
+@TypeConverters(
+    MarkConverter::class,
+    DateConverter::class
+)
 abstract class AppDatabase : RoomDatabase()
 {
     abstract val lessonDao: LessonDao

@@ -4,7 +4,9 @@ import com.myniprojects.jetdiary.db.mark.Mark
 import com.myniprojects.jetdiary.db.mark.MarkAssigned
 import com.myniprojects.jetdiary.db.mark.MarkDao
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import java.util.*
 import javax.inject.Inject
 
 class MarkRepo @Inject constructor(
@@ -12,6 +14,7 @@ class MarkRepo @Inject constructor(
 )
 {
     fun getMarks(lessonId: Long, studentId: Long) = markDao.getMarks(studentId, lessonId)
+    fun getAllMarks() = markDao.getAllMarks()
 
     suspend fun mockData()
     {
@@ -19,7 +22,14 @@ class MarkRepo @Inject constructor(
         {
             markDao.clearTable()
 
-            markDao.insertMark(MarkAssigned(1, 1, Mark.FOUR, "Some note"))
+            markDao.insertMark(
+                MarkAssigned(
+                    studentId = 1,
+                    lessonId = 1, Mark.FOUR,
+                    note = "Some note",
+                    date = Date(System.currentTimeMillis())
+                )
+            )
             markDao.insertMark(MarkAssigned(1, 1, Mark.FIVE))
             markDao.insertMark(MarkAssigned(1, 1, Mark.TWO))
             markDao.insertMark(MarkAssigned(1, 1, Mark.THREE_HALF))
@@ -51,4 +61,8 @@ class MarkRepo @Inject constructor(
                     assignedMarkId = markAssigned.assignedMarkId
                 )
             }
+
+    fun getMarksCount(): Flow<Long> = markDao.getMarksCount()
+
+
 }

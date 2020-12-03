@@ -3,6 +3,7 @@ package com.myniprojects.jetdiary.repo
 import com.myniprojects.jetdiary.db.lesson.Lesson
 import com.myniprojects.jetdiary.db.lesson.LessonDao
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -49,4 +50,7 @@ class LessonRepo @Inject constructor(
                     lessonId = lesson.lessonId
                 )
             }
+
+    fun getLessonsCount(): Flow<Long> = lessonDao.getLessonCount()
+
 }

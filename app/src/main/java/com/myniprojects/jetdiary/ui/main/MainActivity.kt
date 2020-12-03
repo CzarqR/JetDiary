@@ -22,8 +22,8 @@ class MainActivity : AppCompatActivity()
         super.onCreate(savedInstanceState)
 
         // change light mode to test
-//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-//        delegate.applyDayNight()
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        delegate.applyDayNight()
 
         setContent {
             AppTheme {

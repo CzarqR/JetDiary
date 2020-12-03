@@ -5,6 +5,7 @@ import com.myniprojects.jetdiary.db.srudentlesson.LessonStudentCrossRef
 import com.myniprojects.jetdiary.db.student.Student
 import com.myniprojects.jetdiary.db.student.StudentDao
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -68,6 +69,9 @@ class StudentRepo @Inject constructor(
                     studentId = student.studentId
                 )
             }
+
+    fun getStudentsCount(): Flow<Long> = studentDao.getStudentsCount()
+
 
     suspend fun deleteStudentToLesson(lessonId: Long, studentId: Long) =
             withContext(Dispatchers.IO) {

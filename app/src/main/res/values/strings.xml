@@ -9,4 +9,8 @@
     <string name="classes">Classes</string>
     <string name="note">Note</string>
     <string name="edit_students">Edit students</string>
+    <string name="today_marks_format">Marks given today: %s</string>
+    <string name="all_marks_count_format">All given marks %s</string>
+    <string name="students_count_format">All students %s</string>
+    <string name="lesson_count_format">All lessons %s</string>
 </resources>

@@ -15,7 +15,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
 import com.myniprojects.jetdiary.R
 
-
 @Composable
 fun ItemRowBase(
     bottomPadding: Dp? = null,

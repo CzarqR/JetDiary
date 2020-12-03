@@ -9,8 +9,14 @@ interface MarkDao
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMark(markAssigned: MarkAssigned)
 
-    @Query("SELECT * FROM mark_assigned WHERE lessonId=:lessonId AND studentId=:studentId")
+    @Query("SELECT * FROM mark_assigned WHERE lessonId=:lessonId AND studentId=:studentId ORDER BY date DESC")
     fun getMarks(studentId: Long, lessonId: Long): Flow<List<MarkAssigned>>
+
+    @Query("SELECT COUNT(assignedMarkId) FROM mark_assigned")
+    fun getMarksCount(): Flow<Long>
+
+    @Query("SELECT * FROM mark_assigned")
+    fun getAllMarks(): Flow<List<MarkAssigned>>
 
     @Query("DELETE FROM mark_assigned")
     suspend fun clearTable()
