@@ -33,15 +33,14 @@ class MainViewModel @ViewModelInject constructor(
 {
     init
     {
-        //add fake data
-//        viewModelScope.launch {
-//            lessonRepo.mockData()
-//            studentRepo.mockData()
-//            markRepo.mockData()
-//        }
+        // add fake data
+        //viewModelScope.launch {
+        //    lessonRepo.mockData()
+        //    studentRepo.mockData()
+        //    markRepo.mockData()
+        //}
 
     }
-
 
     // region lesson
 
@@ -326,7 +325,6 @@ class MainViewModel @ViewModelInject constructor(
     }
 
     // endregion
-
 
     // region stats
 

@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface StudentDao
 {
-    @Query("SELECT * FROM students ORDER BY name ASC")
+    @Query("SELECT * FROM students ORDER BY surname ASC")
     fun getStudents(): Flow<List<Student>>
 
     @Query("DELETE FROM students")

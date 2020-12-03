@@ -1,6 +1,7 @@
 package com.myniprojects.jetdiary.ui.main
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.padding
@@ -32,6 +33,7 @@ import com.myniprojects.jetdiary.utils.Constants.STUDENT_LESSON_SCREEN_ROUTE
 import com.myniprojects.jetdiary.vm.MainViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalAnimationApi
 @ExperimentalCoroutinesApi
 @Composable
 fun App(
@@ -120,6 +122,7 @@ fun App(
 }
 
 
+@ExperimentalAnimationApi
 @ExperimentalCoroutinesApi
 @Composable
 fun AppBody(

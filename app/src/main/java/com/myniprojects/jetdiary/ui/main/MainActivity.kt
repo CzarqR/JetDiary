@@ -3,7 +3,7 @@ package com.myniprojects.jetdiary.ui.main
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.Surface
 import androidx.compose.ui.platform.setContent
 import com.myniprojects.jetdiary.ui.theme.AppTheme
@@ -17,13 +17,14 @@ class MainActivity : AppCompatActivity()
 {
     private val mainViewModel: MainViewModel by viewModels()
 
+    @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
 
         // change light mode to test
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        delegate.applyDayNight()
+        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        //delegate.applyDayNight()
 
         setContent {
             AppTheme {

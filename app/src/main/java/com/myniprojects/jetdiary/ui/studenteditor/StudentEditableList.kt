@@ -394,7 +394,7 @@ fun AddableStudentItem(
                 Timber.d("Save Button")
                 if (stud.first.surname.isNotBlank() && stud.first.name.isNotBlank())
                 {
-                    onSave(stud)
+                    onSave(stud.copy(second = false))
                     setStudent(Student() to false)
                 }
             },

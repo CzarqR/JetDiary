@@ -1,5 +1,6 @@
 package com.myniprojects.jetdiary.ui.studentlesson
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -22,6 +23,7 @@ import com.myniprojects.jetdiary.ui.studenteditor.StudentItem
 import com.myniprojects.jetdiary.vm.MainViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalAnimationApi
 @ExperimentalCoroutinesApi
 @Composable
 fun StudentLessonBody(

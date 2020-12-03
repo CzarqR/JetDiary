@@ -1,14 +1,21 @@
 package com.myniprojects.jetdiary.ui.common
 
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animate
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Divider
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.ArrowUpward
@@ -21,6 +28,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import com.myniprojects.jetdiary.R
 
+@ExperimentalAnimationApi
 @Composable
 fun <T> DefaultEditableBody(
     editableRow: EditableRow<T>,
@@ -30,6 +38,8 @@ fun <T> DefaultEditableBody(
     title: String? = null
 )
 {
+    val animatedElevation = animate(1.dp, TweenSpec(500))
+
     val (addState, setAddState) = remember { mutableStateOf(false) }
     val (addItem, setAddItem) = remember { mutableStateOf(editableRow.editListState.generateNewItem()) }
 
@@ -44,17 +54,43 @@ fun <T> DefaultEditableBody(
         if (addState)
         {
 
-            editableRow.addableItem(
-                item = addItem,
-                save = {
-                    editableRow.editListState.insert(it)
+            androidx.compose.animation.AnimatedVisibility(
+                visible = true,
+                initiallyVisible = false,
+                enter = remember {
+                    fadeIn(
+                        animSpec = TweenSpec(
+                            300,
+                            easing = FastOutLinearInEasing
+                        )
+                    )
                 },
-                update = {
-                    setAddItem(it)
-                }
+                exit = remember {
+                    fadeOut(
+                        animSpec = TweenSpec(
+                            100,
+                            easing = FastOutSlowInEasing
+                        )
+                    )
+                },
             )
+            {
+                Surface(
+                    elevation = animatedElevation
+                ) {
 
-            Divider(modifier = Modifier.padding(4.dp))
+                    editableRow.addableItem(
+                        item = addItem,
+                        save = {
+                            editableRow.editListState.insert(it)
+                        },
+                        update = {
+                            setAddItem(it)
+                        }
+                    )
+                }
+            }
+
 
         }
 

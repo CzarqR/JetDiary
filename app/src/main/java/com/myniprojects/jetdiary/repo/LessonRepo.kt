@@ -24,6 +24,8 @@ class LessonRepo @Inject constructor(
             lessonDao.insertLesson(Lesson("Programing intro", 2))
             lessonDao.insertLesson(Lesson("Mathematica", 3))
             lessonDao.insertLesson(Lesson("Mobile programing", 4))
+            lessonDao.insertLesson(Lesson("Servers", 5))
+            lessonDao.insertLesson(Lesson("Web programming", 6))
 
         }
     }
@@ -38,10 +40,6 @@ class LessonRepo @Inject constructor(
                 lessonDao.insertLesson(lesson)
             }
 
-    suspend fun clearLessonsTable() =
-            withContext(Dispatchers.IO) {
-                lessonDao.clearTable()
-            }
 
     suspend fun updateLesson(lesson: Lesson) =
             withContext(Dispatchers.IO) {

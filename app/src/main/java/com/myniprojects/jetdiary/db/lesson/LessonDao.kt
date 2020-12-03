@@ -1,7 +1,6 @@
 package com.myniprojects.jetdiary.db.lesson
 
 import androidx.room.*
-import com.myniprojects.jetdiary.db.mark.MarkAssigned
 import kotlinx.coroutines.flow.Flow
 
 @Dao

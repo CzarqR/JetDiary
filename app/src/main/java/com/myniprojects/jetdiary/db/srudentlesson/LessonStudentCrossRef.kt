@@ -1,7 +1,6 @@
 package com.myniprojects.jetdiary.db.srudentlesson
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
 @Entity(
     primaryKeys = [
