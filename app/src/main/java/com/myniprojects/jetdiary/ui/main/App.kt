@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Analytics
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.runtime.*
@@ -22,16 +23,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import com.myniprojects.jetdiary.R
+import com.myniprojects.jetdiary.ui.analysis.AnalysisScreen
 import com.myniprojects.jetdiary.ui.lesson.LessonBody
 import com.myniprojects.jetdiary.ui.mark.MarksBody
 import com.myniprojects.jetdiary.ui.studenteditor.StudentBody
 import com.myniprojects.jetdiary.ui.studentlesson.StudentLessonBody
+import com.myniprojects.jetdiary.utils.Constants.ANALYSIS_SCREEN_ROUTE
 import com.myniprojects.jetdiary.utils.Constants.LESSON_SCREEN_ROUTE
 import com.myniprojects.jetdiary.utils.Constants.MARKS_SCREEN_ROUTE
 import com.myniprojects.jetdiary.utils.Constants.STUDENT_EDITOR_SCREEN_ROUTE
 import com.myniprojects.jetdiary.utils.Constants.STUDENT_LESSON_SCREEN_ROUTE
 import com.myniprojects.jetdiary.vm.MainViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import timber.log.Timber
 
 @ExperimentalAnimationApi
 @ExperimentalCoroutinesApi
@@ -71,6 +75,11 @@ fun App(
             navController.navigate(route = STUDENT_EDITOR_SCREEN_ROUTE)
             viewModel.studentEditorNavigated()
         }
+        viewModel.navigateToAnalysis.value ->
+        {
+            navController.navigate(route = ANALYSIS_SCREEN_ROUTE)
+            viewModel.analysisNavigated()
+        }
     }
 
 
@@ -100,6 +109,20 @@ fun App(
                         }
                     }
                 },
+                actions = {
+                    if (!canPop)
+                    {
+                        IconButton(onClick = {
+                            Timber.d("Action clicked")
+                            viewModel.navigateToAnalysis()
+                        }) {
+                            Icon(
+                                asset = Icons.Outlined.Analytics,
+                                tint = AmbientContentColor.current.copy(alpha = 1f)
+                            )
+                        }
+                    }
+                }
             )
 
         },
@@ -170,6 +193,15 @@ fun AppBody(
                 setTitle = setTitle
             )
         }
+
+        composable(
+            route = ANALYSIS_SCREEN_ROUTE
+        ) {
+            AnalysisScreen(
+                viewModel = viewModel,
+                setTitle = setTitle
+            )
+        }
     }
 }
 
@@ -180,7 +212,7 @@ fun DrawerContent(
     mainViewModel: MainViewModel
 )
 {
-    val today = mainViewModel.todayMarks.collectAsState(initial = null)
+    val today = mainViewModel.todayMarksCount.collectAsState(initial = null)
     val allMarksCount = mainViewModel.allMarksCount.collectAsState(initial = null)
     val studentsCount = mainViewModel.studentsCount.collectAsState(initial = null)
     val lessonsCount = mainViewModel.lessonsCount.collectAsState(initial = null)

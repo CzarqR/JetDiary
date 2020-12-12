@@ -9,4 +9,5 @@
     <dimen name="last_card_padding">80dp</dimen>
     <dimen name="default_padding_medium">16dp</dimen>
     <dimen name="drawer_icon">150dp</dimen>
+    <dimen name="default_padding_tiny">4dp</dimen>
 </resources>

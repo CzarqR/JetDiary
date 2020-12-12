@@ -29,6 +29,7 @@ fun ItemRowBase(
     bottomPadding: Dp? = null,
     visible: Boolean = true,
     initialVisibility: Boolean = false,
+    modifier: Modifier = Modifier,
     body: @Composable () -> Unit,
 )
 {
@@ -39,7 +40,7 @@ fun ItemRowBase(
         exit = remember { fadeOut(animSpec = TweenSpec(100, easing = FastOutSlowInEasing)) },
     ) {
         Card(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(
                     start = dimensionResource(id = R.dimen.item_base_margin_h),

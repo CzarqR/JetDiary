@@ -13,4 +13,6 @@
     <string name="all_marks_count_format">All given marks %s</string>
     <string name="students_count_format">All students %s</string>
     <string name="lesson_count_format">All lessons %s</string>
+    <string name="analysis">Analysis from today</string>
+    <string name="student_format">%s %s</string>
 </resources>

@@ -328,21 +328,65 @@ class MainViewModel @ViewModelInject constructor(
 
     // region stats
 
-    val todayMarks: Flow<Long> = markRepo.getAllMarks().flatMapLatest {
+    private val allMarks = markRepo.getAllMarks()
 
-        var i = 0L
-
-        it.forEach { mark ->
-            if (DateUtils.isToday(mark.date.time))
-                i++
+    private val todayMarks = allMarks.map { allMarks ->
+        allMarks.filter { mark ->
+            DateUtils.isToday(mark.date.time)
         }
+    }
 
-        flowOf(i)
+    val todayMarksCount: Flow<Long> = todayMarks.flatMapLatest {
+        flowOf(it.size.toLong())
     }
 
     val allMarksCount = markRepo.getMarksCount()
     val lessonsCount = lessonRepo.getLessonsCount()
     val studentsCount = studentRepo.getStudentsCount()
+
+    // endregion
+
+
+    // region analysis
+
+    private val _navigateToAnalysis: MutableState<Boolean> = mutableStateOf(false)
+    val navigateToAnalysis: State<Boolean> = _navigateToAnalysis
+
+    fun analysisNavigated()
+    {
+        _navigateToAnalysis.value = false
+    }
+
+    fun navigateToAnalysis()
+    {
+        _navigateToAnalysis.value = true
+    }
+
+    val markLessonStudent = combine(
+        todayMarks,
+        allStudents,
+        lessonRepo.lessons
+    ) { marks: List<MarkAssigned>, students: List<Student>, lessons: List<Lesson> ->
+
+        val list = mutableListOf<Triple<MarkAssigned, Student, Lesson>>()
+
+        marks.forEach { mark ->
+            val s = students.find {
+                it.studentId == mark.studentId
+            }
+
+            val l = lessons.find {
+                it.lessonId == mark.lessonId
+            }
+
+            if (s != null && l != null)
+            {
+                list.add(Triple(mark, s, l))
+            }
+        }
+
+        return@combine list
+    }
 
     // endregion
 }
